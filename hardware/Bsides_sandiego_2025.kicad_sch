@@ -4640,6 +4640,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC#" "C434450"
+			(at 50.8 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "f1e9c97e-4ac3-464e-96fb-de68438e5099")
 		)
@@ -5342,6 +5351,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC#" "C434424"
+			(at 50.8 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "679009f1-a894-4242-8f8a-186eacabb3c5")
 		)
@@ -5410,6 +5428,15 @@
 			)
 		)
 		(property "provedor" ""
+			(at 50.8 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC#" "C5440628"
 			(at 50.8 118.11 0)
 			(effects
 				(font
@@ -8089,6 +8116,15 @@
 			)
 		)
 		(property "provedor" ""
+			(at 52.07 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC#" "C409795"
 			(at 52.07 171.45 0)
 			(effects
 				(font
