@@ -4,6 +4,14 @@
 	(generator_version "8.0")
 	(uuid "f17b11f7-cf2d-4178-8d8d-fa3b03b7f629")
 	(paper "A4")
+	(title_block
+		(title "bsides-sandiego")
+		(date "2024-12-16")
+		(rev "v1.0")
+		(company "ElectronicCats")
+		(comment 1 "Lizeth Gallegos")
+		(comment 2 "Edgar Capuchino")
+	)
 	(lib_symbols
 		(symbol "Connector:Screw_Terminal_01x04"
 			(pin_names
