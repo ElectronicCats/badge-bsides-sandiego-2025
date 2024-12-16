@@ -485,7 +485,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "Bsides_sandiego_2025.step",
       "svg": "",
       "vrml": ""
     },
@@ -629,7 +629,7 @@
   "sheets": [
     [
       "f17b11f7-cf2d-4178-8d8d-fa3b03b7f629",
-      "Raíz"
+      "Root"
     ]
   ],
   "text_variables": {}
