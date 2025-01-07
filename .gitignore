@@ -29,3 +29,13 @@ hardware/**/*.csv
 hardware/Template-KiCAD-Project-CI-backups/
 
 *.zip
+
+# Firmware binaries
+firmware/**/obj/
+
+# VSCode config
+.vscode/
+.mrs/
+
+# macOS Finder files
+**/.DS_Store
