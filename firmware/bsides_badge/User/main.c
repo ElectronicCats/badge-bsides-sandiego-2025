@@ -1,6 +1,5 @@
-/********************************** (C) COPYRIGHT *******************************
- * File Name          : main.c
- * Author             : WCH
+/********************************** (C) COPYRIGHT
+ ******************************** File Name          : main.c Author : WCH
  * Version            : V1.0.0
  * Date               : 2023/12/25
  * Description        : Main program body.
@@ -14,8 +13,8 @@
  *@Note
  *Multiprocessor communication mode routine:
  *Master:USART1_Tx(PD5)\USART1_Rx(PD6).
- *This routine demonstrates that USART1 receives the data sent by CH341 and inverts
- *it and sends it (baud rate 115200).
+ *This routine demonstrates that USART1 receives the data sent by CH341 and
+ *inverts it and sends it (baud rate 115200).
  *
  *Hardware connection:PD5 -- Rx
  *                     PD6 -- Tx
@@ -55,7 +54,8 @@ void USARTx_CFG(void) {
   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
   USART_InitStructure.USART_StopBits = USART_StopBits_1;
   USART_InitStructure.USART_Parity = USART_Parity_No;
-  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+  USART_InitStructure.USART_HardwareFlowControl =
+      USART_HardwareFlowControl_None;
   USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
 
   USART_Init(USART1, &USART_InitStructure);
@@ -129,7 +129,8 @@ void USARTx_CFG(void) {
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ===================================================================================
-// Modified to work with CH32V003 by Stefan Wagner: https://github.com/wagiminator
+// Modified to work with CH32V003 by Stefan Wagner:
+// https://github.com/wagiminator
 // ===================================================================================
 
 #include "driver.h"
@@ -139,7 +140,8 @@ void USARTx_CFG(void) {
 // Global Variables
 // ===================================================================================
 uint8_t Grid_TTRIS[12][3] = {{0}};
-const uint8_t MEM_TTTRIS[16] = {0, 2, 0, 4, 3, 7, 6, 9, 9, 12, 11, 15, 14, 17, 17, 19};
+const uint8_t MEM_TTTRIS[16] = {0, 2,  0,  4,  3,  7,  6,  9,
+                                9, 12, 11, 15, 14, 17, 17, 19};
 uint8_t Level_TTRIS;
 uint16_t Scores_TTRIS;
 uint16_t Nb_of_line_F_TTRIS;
@@ -192,13 +194,20 @@ void rotate_Matrix_TTRIS(uint8_t ROT);
 uint8_t Scan_Piece_Matrix_TTRIS(int8_t x_Mat, int8_t y_Mat);
 uint8_t GRID_STAT_TTRIS(int8_t X_SCAN, int8_t Y_SCAN);
 uint8_t CHANGE_GRID_STAT_TTRIS(int8_t X_SCAN, int8_t Y_SCAN, uint8_t VALUE);
-uint8_t blitzSprite_TTRIS(int8_t xPos, int8_t yPos, uint8_t xPASS, uint8_t yPASS, uint8_t FRAME, const uint8_t* SPRITES);
+uint8_t blitzSprite_TTRIS(int8_t xPos,
+                          int8_t yPos,
+                          uint8_t xPASS,
+                          uint8_t yPASS,
+                          uint8_t FRAME,
+                          const uint8_t* SPRITES);
 uint8_t H_grid_Scan_TTRIS(uint8_t xPASS);
 uint8_t Recupe_TTRIS(uint8_t xPASS, uint8_t yPASS);
 uint8_t NEXT_BLOCK_TTRIS(uint8_t xPASS, uint8_t yPASS);
 uint8_t RECUPE_BACKGROUND_TTRIS(uint8_t xPASS, uint8_t yPASS);
 uint8_t DropPiece_TTRIS(uint8_t xPASS, uint8_t yPASS);
-uint8_t SplitSpriteDecalageY_TTRIS(uint8_t decalage, uint8_t Input, uint8_t UPorDOWN);
+uint8_t SplitSpriteDecalageY_TTRIS(uint8_t decalage,
+                                   uint8_t Input,
+                                   uint8_t UPorDOWN);
 uint8_t RecupeLineY_TTRIS(uint8_t Valeur);
 uint8_t RecupeDecalageY_TTRIS(uint8_t Valeur);
 void Tiny_Flip_TTRIS(uint8_t HR_TTRIS);
@@ -221,8 +230,52 @@ uint8_t checksum(uint8_t Byte_);
 // Main Function
 // ===================================================================================
 int main(void) {
+  SystemCoreClockUpdate();
+  Delay_Init();
+#if (SDI_PRINT == SDI_PR_OPEN)
+  SDI_Printf_Enable();
+#else
+  USART_Printf_Init(115200);
+#endif
+  printf("SystemClk:%d\r\n", SystemCoreClock);
+  printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
+
+  USARTx_CFG();
+  printf("BSides Badges\r\n");
+
+  // while(1)
+  // {
+  //     static uint8_t counter = 0;
+  //     counter++;
+  //     printf("Hola %d\r\n", counter);
+  //     Delay_Ms(1000);
+  //     // while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET)
+  //     // {
+  //     //     /* waiting for receiving finish */
+  //     // }
+  //     // val = (USART_ReceiveData(USART1));
+  //     // USART_SendData(USART1, ~val);
+  //     // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
+  //     // {
+  //     //     /* waiting for sending finish */
+  //     // }
+  // }
+
   // Setup
   JOY_init();
+
+  while (1) {
+    static uint8_t counter = 0;
+    counter++;
+    printf("%d\r\n", counter);
+    printf("Button right: %s\r\n",
+           JOY_right_pressed() ? "pressed" : "released");
+    printf("Button left: %s\r\n", JOY_left_pressed() ? "pressed" : "released");
+    printf("Button up: %s\r\n", JOY_up_pressed() ? "pressed" : "released");
+    printf("Button down: %s\r\n", JOY_down_pressed() ? "pressed" : "released");
+    printf("----------------\r\n");
+    JOY_DLY_ms(1000);
+  }
 
   // Loop
   while (1) {
@@ -360,7 +413,8 @@ void END_DROP_TTRIS(void) {
   for (y = 0; y < 5; y++) {
     for (x = 0; x < 5; x++) {
       if (Piece_Mat2_TTRIS[x][y] == 1) {
-        CHANGE_GRID_STAT_TTRIS(OU_SUIS_JE_X_TTRIS + (x), OU_SUIS_JE_Y_TTRIS + (y), 1);
+        CHANGE_GRID_STAT_TTRIS(OU_SUIS_JE_X_TTRIS + (x),
+                               OU_SUIS_JE_Y_TTRIS + (y), 1);
       }
     }
   }
@@ -406,7 +460,8 @@ void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
         }
       }
     } else {
-      SPEED_x_trig_TTRIS = (SPEED_x_trig_TTRIS > 0) ? SPEED_x_trig_TTRIS - 1 : 0;
+      SPEED_x_trig_TTRIS =
+          (SPEED_x_trig_TTRIS > 0) ? SPEED_x_trig_TTRIS - 1 : 0;
     }
   }
   if ((JOY_right_pressed() == 0) && (JOY_left_pressed() == 0)) {
@@ -415,7 +470,8 @@ void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
   }
 
   if (JOY_act_released()) {
-    if ((OU_SUIS_JE_X_ENGAGED_TTRIS == 0) && (OU_SUIS_JE_Y_ENGAGED_TTRIS == 0)) {
+    if ((OU_SUIS_JE_X_ENGAGED_TTRIS == 0) &&
+        (OU_SUIS_JE_Y_ENGAGED_TTRIS == 0)) {
       Ripple_filter_TTRIS = 0;
     }
   }
@@ -567,7 +623,8 @@ void Clean_Grid_TTRIS(uint8_t* PASS_LINE) {
       }
     }
     for (x = 0; x < 12; x++) {
-      CHANGE_GRID_STAT_TTRIS(x, GRID_1, (GRID_2 > 0) ? GRID_STAT_TTRIS(x, GRID_2) : 0);
+      CHANGE_GRID_STAT_TTRIS(x, GRID_1,
+                             (GRID_2 > 0) ? GRID_STAT_TTRIS(x, GRID_2) : 0);
     }
     GRID_1 = (GRID_1 > 0) ? GRID_1 - 1 : 0;
     GRID_2 = (GRID_2 > 0) ? GRID_2 - 1 : 0;
@@ -583,7 +640,8 @@ uint8_t CHECK_if_Rot_Ok_TTRIS(uint8_t* Rot_TTRIS) {
   *Rot_TTRIS = (*Rot_TTRIS < PIECEs_rot_TTRIS) ? *Rot_TTRIS + 1 : 0;
   rotate_Matrix_TTRIS(*Rot_TTRIS);
 
-  if ((Check_collision_x_TTRIS(OU_SUIS_JE_X_ENGAGED_TTRIS) || (Check_collision_y_TTRIS(OU_SUIS_JE_Y_ENGAGED_TTRIS))) != 0) {
+  if ((Check_collision_x_TTRIS(OU_SUIS_JE_X_ENGAGED_TTRIS) ||
+       (Check_collision_y_TTRIS(OU_SUIS_JE_Y_ENGAGED_TTRIS))) != 0) {
     *Rot_TTRIS = Mem_rot;
     rotate_Matrix_TTRIS(*Rot_TTRIS);
     return 1;
@@ -597,7 +655,8 @@ uint8_t Check_collision_x_TTRIS(int8_t x_Axe) {
   for (y = 0; y < 5; y++) {
     for (x = 0; x < 5; x++) {
       if (Piece_Mat2_TTRIS[x][y] == 1) {
-        if (GRID_STAT_TTRIS((x + OU_SUIS_JE_X_TTRIS) + x_Axe, y + OU_SUIS_JE_Y_TTRIS)) {
+        if (GRID_STAT_TTRIS((x + OU_SUIS_JE_X_TTRIS) + x_Axe,
+                            y + OU_SUIS_JE_Y_TTRIS)) {
           return 1;
         }
       }
@@ -611,7 +670,8 @@ uint8_t Check_collision_y_TTRIS(int8_t y_Axe) {
   for (y = 0; y < 5; y++) {
     for (x = 0; x < 5; x++) {
       if (Piece_Mat2_TTRIS[x][y] == 1) {
-        if (GRID_STAT_TTRIS(x + OU_SUIS_JE_X_TTRIS, (y + OU_SUIS_JE_Y_TTRIS) + y_Axe)) {
+        if (GRID_STAT_TTRIS(x + OU_SUIS_JE_X_TTRIS,
+                            (y + OU_SUIS_JE_Y_TTRIS) + y_Axe)) {
           return 1;
         }
       }
@@ -723,7 +783,8 @@ void rotate_Matrix_TTRIS(uint8_t ROT) {
         default:
           break;
       }
-      Piece_Mat2_TTRIS[a_][b_] = Scan_Piece_Matrix_TTRIS(x, y + (PIECEs_TTRIS * 5));
+      Piece_Mat2_TTRIS[a_][b_] =
+          Scan_Piece_Matrix_TTRIS(x, y + (PIECEs_TTRIS * 5));
     }
   }
 }
@@ -767,21 +828,29 @@ uint8_t CHANGE_GRID_STAT_TTRIS(int8_t X_SCAN, int8_t Y_SCAN, uint8_t VALUE) {
   uint8_t Y_VAR_DECALAGE = RecupeDecalageY_TTRIS(Y_SCAN);
   uint8_t COMP_BYTE_DECALAGE = (0b10000000 >> Y_VAR_DECALAGE);
   if (VALUE) {
-    Grid_TTRIS[X_SCAN][Y_VAR_SELECT] = COMP_BYTE_DECALAGE | Grid_TTRIS[X_SCAN][Y_VAR_SELECT];
+    Grid_TTRIS[X_SCAN][Y_VAR_SELECT] =
+        COMP_BYTE_DECALAGE | Grid_TTRIS[X_SCAN][Y_VAR_SELECT];
   } else {
-    Grid_TTRIS[X_SCAN][Y_VAR_SELECT] = (0xff - COMP_BYTE_DECALAGE) & Grid_TTRIS[X_SCAN][Y_VAR_SELECT];
+    Grid_TTRIS[X_SCAN][Y_VAR_SELECT] =
+        (0xff - COMP_BYTE_DECALAGE) & Grid_TTRIS[X_SCAN][Y_VAR_SELECT];
   }
   return 0;
 }
 
-uint8_t blitzSprite_TTRIS(int8_t xPos, int8_t yPos, uint8_t xPASS, uint8_t yPASS, uint8_t FRAME, const uint8_t* SPRITES) {
+uint8_t blitzSprite_TTRIS(int8_t xPos,
+                          int8_t yPos,
+                          uint8_t xPASS,
+                          uint8_t yPASS,
+                          uint8_t FRAME,
+                          const uint8_t* SPRITES) {
   uint8_t OUTBYTE;
   uint8_t WSPRITE = ((SPRITES[0]));
   uint8_t HSPRITE = ((SPRITES[1]));
   uint8_t Wmax = ((HSPRITE * WSPRITE) + 1);
   uint16_t PICBYTE = FRAME * (Wmax - 1);
   uint8_t RECUPELINEY = RecupeLineY_TTRIS(yPos);
-  if ((xPASS > ((xPos + (WSPRITE - 1)))) || (xPASS < xPos) || ((RECUPELINEY > yPASS) || ((RECUPELINEY + (HSPRITE)) < yPASS))) {
+  if ((xPASS > ((xPos + (WSPRITE - 1)))) || (xPASS < xPos) ||
+      ((RECUPELINEY > yPASS) || ((RECUPELINEY + (HSPRITE)) < yPASS))) {
     return 0x00;
   }
   uint8_t SPRITEyLINE = (yPASS - (RECUPELINEY));
@@ -791,10 +860,12 @@ uint8_t blitzSprite_TTRIS(int8_t xPos, int8_t yPos, uint8_t xPASS, uint8_t yPASS
   if (ScanA > Wmax) {
     OUTBYTE = 0x00;
   } else {
-    OUTBYTE = SplitSpriteDecalageY_TTRIS(SPRITEyDECALAGE, (SPRITES[ScanA + (PICBYTE)]), 1);
+    OUTBYTE = SplitSpriteDecalageY_TTRIS(SPRITEyDECALAGE,
+                                         (SPRITES[ScanA + (PICBYTE)]), 1);
   }
   if ((SPRITEyLINE > 0)) {
-    uint8_t OUTBYTE2 = SplitSpriteDecalageY_TTRIS(SPRITEyDECALAGE, (SPRITES[ScanB + (PICBYTE)]), 0);
+    uint8_t OUTBYTE2 = SplitSpriteDecalageY_TTRIS(
+        SPRITEyDECALAGE, (SPRITES[ScanB + (PICBYTE)]), 0);
     if (ScanB > Wmax) {
       return OUTBYTE;
     } else {
@@ -812,7 +883,8 @@ uint8_t H_grid_Scan_TTRIS(uint8_t xPASS) {
 uint8_t Recupe_TTRIS(uint8_t xPASS, uint8_t yPASS) {
   uint8_t BYTE_TTRIS = 0;
   uint8_t x = 0;
-  for (uint8_t y = MEM_TTTRIS[(yPASS << 1)]; y < MEM_TTTRIS[(yPASS << 1) + 1]; y++) {
+  for (uint8_t y = MEM_TTTRIS[(yPASS << 1)]; y < MEM_TTTRIS[(yPASS << 1) + 1];
+       y++) {
     if ((xPASS > 45) && (xPASS < 82)) {
       x = H_grid_Scan_TTRIS(xPASS);
     } else {
@@ -823,10 +895,13 @@ uint8_t Recupe_TTRIS(uint8_t xPASS, uint8_t yPASS) {
               recupe_LEVEL_TTRIS(xPASS, yPASS));
     }
     if (GRID_STAT_TTRIS(x, y) == 1) {
-      BYTE_TTRIS = BYTE_TTRIS | blitzSprite_TTRIS(46 + (x * 3), 5 + (y * 3), xPASS, yPASS, 0, tinyblock_TTTRIS);
+      BYTE_TTRIS =
+          BYTE_TTRIS | blitzSprite_TTRIS(46 + (x * 3), 5 + (y * 3), xPASS,
+                                         yPASS, 0, tinyblock_TTTRIS);
     }
   }
-  return RECUPE_BACKGROUND_TTRIS(xPASS, yPASS) | BYTE_TTRIS | DropPiece_TTRIS(xPASS, yPASS);
+  return RECUPE_BACKGROUND_TTRIS(xPASS, yPASS) | BYTE_TTRIS |
+         DropPiece_TTRIS(xPASS, yPASS);
 }
 
 uint8_t NEXT_BLOCK_TTRIS(uint8_t xPASS, uint8_t yPASS) {
@@ -862,7 +937,9 @@ uint8_t NEXT_BLOCK_TTRIS(uint8_t xPASS, uint8_t yPASS) {
     for (uint8_t y = 0; y < 5; y++) {
       for (uint8_t x = 0; x < 5; x++) {
         if (Scan_Piece_Matrix_TTRIS(x, y + (PIECEs_TTRIS_PREVIEW * 5)) == 1) {
-          Byte_Mem |= blitzSprite_TTRIS(92 + (x * 2) + x_add, (27 + (y * 2)) - 5 + y_add, xPASS, yPASS, 0, tiny_PREVIEW_block_TTTRIS);
+          Byte_Mem |= blitzSprite_TTRIS(92 + (x * 2) + x_add,
+                                        (27 + (y * 2)) - 5 + y_add, xPASS,
+                                        yPASS, 0, tiny_PREVIEW_block_TTTRIS);
         }
       }
     }
@@ -880,14 +957,18 @@ uint8_t DropPiece_TTRIS(uint8_t xPASS, uint8_t yPASS) {
   for (uint8_t y = 0; y < 5; y++) {
     for (uint8_t x = 0; x < 5; x++) {
       if (Piece_Mat2_TTRIS[x][y] == 1) {
-        Byte_Mem |= blitzSprite_TTRIS(xx_TTRIS + (x * 3), (yy_TTRIS + (y * 3)) - 5, xPASS, yPASS, 0, tinyblock2_TTTRIS);
+        Byte_Mem |=
+            blitzSprite_TTRIS(xx_TTRIS + (x * 3), (yy_TTRIS + (y * 3)) - 5,
+                              xPASS, yPASS, 0, tinyblock2_TTTRIS);
       }
     }
   }
   return Byte_Mem;
 }
 
-uint8_t SplitSpriteDecalageY_TTRIS(uint8_t decalage, uint8_t Input, uint8_t UPorDOWN) {
+uint8_t SplitSpriteDecalageY_TTRIS(uint8_t decalage,
+                                   uint8_t Input,
+                                   uint8_t UPorDOWN) {
   if (UPorDOWN) {
     return Input << decalage;
   }
@@ -930,13 +1011,13 @@ uint8_t intro_TTRIS(uint8_t xPASS, uint8_t yPASS, uint8_t* TIMER1) {
           Recupe_Start_TTRIS(xPASS, yPASS, TIMER1) |
           recupe_SCORES_TTRIS(xPASS, yPASS) |
           recupe_Nb_of_line_TTRIS(xPASS, yPASS) |
-          recupe_SCORES_TTRIS(xPASS, yPASS) |
-          recupe_LEVEL_TTRIS(xPASS, yPASS));
+          recupe_SCORES_TTRIS(xPASS, yPASS) | recupe_LEVEL_TTRIS(xPASS, yPASS));
 }
 
 uint8_t Recupe_Start_TTRIS(uint8_t xPASS, uint8_t yPASS, uint8_t* TIMER1) {
   if (*TIMER1 > 3) {
-    return blitzSprite_TTRIS(49, 28, xPASS, yPASS, 0, start_button_1_TTRIS) | blitzSprite_TTRIS(49, 36, xPASS, yPASS, 0, start_button_2_TTRIS);
+    return blitzSprite_TTRIS(49, 28, xPASS, yPASS, 0, start_button_1_TTRIS) |
+           blitzSprite_TTRIS(49, 36, xPASS, yPASS, 0, start_button_2_TTRIS);
   } else {
     return 0;
   }
@@ -961,10 +1042,13 @@ uint8_t recupe_SCORES_TTRIS(uint8_t xPASS, uint8_t yPASS) {
     return 0;
   }
 #define M10000 (Scores_TTRIS / 10000)
-#define M1000 (((Scores_TTRIS) - (M10000 * 10000)) / 1000)
-#define M100 (((Scores_TTRIS) - (M1000 * 1000) - (M10000 * 10000)) / 100)
-#define M10 (((Scores_TTRIS) - (M100 * 100) - (M1000 * 1000) - (M10000 * 10000)) / 10)
-#define M1 ((Scores_TTRIS) - (M10 * 10) - (M100 * 100) - (M1000 * 1000) - (M10000 * 10000))
+#define M1000  (((Scores_TTRIS) - (M10000 * 10000)) / 1000)
+#define M100   (((Scores_TTRIS) - (M1000 * 1000) - (M10000 * 10000)) / 100)
+#define M10 \
+  (((Scores_TTRIS) - (M100 * 100) - (M1000 * 1000) - (M10000 * 10000)) / 10)
+#define M1                                                       \
+  ((Scores_TTRIS) - (M10 * 10) - (M100 * 100) - (M1000 * 1000) - \
+   (M10000 * 10000))
   return (blitzSprite_TTRIS(95, 8, xPASS, yPASS, M10000, police_TTRIS) |
           blitzSprite_TTRIS(99, 8, xPASS, yPASS, M1000, police_TTRIS) |
           blitzSprite_TTRIS(103, 8, xPASS, yPASS, M100, police_TTRIS) |
@@ -975,8 +1059,10 @@ uint8_t recupe_SCORES_TTRIS(uint8_t xPASS, uint8_t yPASS) {
 
 void Convert_Nb_of_line_TTRIS(void) {
   Nb_of_line_TTRIS[2] = (Nb_of_line_F_TTRIS / 100);
-  Nb_of_line_TTRIS[1] = ((Nb_of_line_F_TTRIS - (Nb_of_line_TTRIS[2] * 100)) / 10);
-  Nb_of_line_TTRIS[0] = (Nb_of_line_F_TTRIS - (Nb_of_line_TTRIS[2] * 100) - (Nb_of_line_TTRIS[1] * 10));
+  Nb_of_line_TTRIS[1] =
+      ((Nb_of_line_F_TTRIS - (Nb_of_line_TTRIS[2] * 100)) / 10);
+  Nb_of_line_TTRIS[0] = (Nb_of_line_F_TTRIS - (Nb_of_line_TTRIS[2] * 100) -
+                         (Nb_of_line_TTRIS[1] * 10));
 }
 
 uint8_t recupe_Nb_of_line_TTRIS(uint8_t xPASS, uint8_t yPASS) {
@@ -989,9 +1075,12 @@ uint8_t recupe_Nb_of_line_TTRIS(uint8_t xPASS, uint8_t yPASS) {
   if (yPASS > 1) {
     return 0;
   }
-  return (blitzSprite_TTRIS(16, 8, xPASS, yPASS, Nb_of_line_TTRIS[2], police_TTRIS) |
-          blitzSprite_TTRIS(20, 8, xPASS, yPASS, Nb_of_line_TTRIS[1], police_TTRIS) |
-          blitzSprite_TTRIS(24, 8, xPASS, yPASS, Nb_of_line_TTRIS[0], police_TTRIS));
+  return (blitzSprite_TTRIS(16, 8, xPASS, yPASS, Nb_of_line_TTRIS[2],
+                            police_TTRIS) |
+          blitzSprite_TTRIS(20, 8, xPASS, yPASS, Nb_of_line_TTRIS[1],
+                            police_TTRIS) |
+          blitzSprite_TTRIS(24, 8, xPASS, yPASS, Nb_of_line_TTRIS[0],
+                            police_TTRIS));
 }
 
 uint8_t recupe_LEVEL_TTRIS(uint8_t xPASS, uint8_t yPASS) {
@@ -1004,8 +1093,10 @@ uint8_t recupe_LEVEL_TTRIS(uint8_t xPASS, uint8_t yPASS) {
   if (yPASS != 5) {
     return 0;
   }
-  return (blitzSprite_TTRIS(109, 41, xPASS, yPASS, (Level_TTRIS / 10), police_TTRIS) |
-          blitzSprite_TTRIS(114, 41, xPASS, yPASS, (Level_TTRIS % 10), police_TTRIS));
+  return (blitzSprite_TTRIS(109, 41, xPASS, yPASS, (Level_TTRIS / 10),
+                            police_TTRIS) |
+          blitzSprite_TTRIS(114, 41, xPASS, yPASS, (Level_TTRIS % 10),
+                            police_TTRIS));
 }
 
 void INIT_ALL_VAR_TTRIS(void) {
@@ -1067,8 +1158,10 @@ void recupe_HIGHSCORE_TTRIS(void) {
   //SUM check
   for (t=0;t<Number_of_Backup;t++){
   if ((checksum(Level_(t)))!=(Level_SUM[t])) {Level_SUM[t]=255;RESAVE=1;}
-  if ((checksum(line_A(t))+checksum(line_B(t)))!=(line_SUM[t])) {line_SUM[t]=255;RESAVE=1;}
-  if ((checksum(Scores_A(t))+checksum(Scores_B(t)))!=(Scores_SUM[t])) {Scores_SUM[t]=255;RESAVE=1;}
+  if ((checksum(line_A(t))+checksum(line_B(t)))!=(line_SUM[t]))
+  {line_SUM[t]=255;RESAVE=1;} if
+  ((checksum(Scores_A(t))+checksum(Scores_B(t)))!=(Scores_SUM[t]))
+  {Scores_SUM[t]=255;RESAVE=1;}
   }
   //SUM check fin
 

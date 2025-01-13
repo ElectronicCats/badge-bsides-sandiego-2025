@@ -1,5 +1,6 @@
 // ===================================================================================
-// Tiny Joypad Drivers for CH32V003                                           * v1.0 *
+// Tiny Joypad Drivers for CH32V003                                           *
+// v1.0 *
 // ===================================================================================
 //
 // MCU abstraction layer.
@@ -12,96 +13,115 @@ extern "C" {
 #endif
 
 #include <stdbool.h>
+#include "ch32v00x.h"
 #include "gpio.h"
 #include "oled_min.h"
 
 // Pin assignments
-#define PIN_ACT     PA2   // pin connected to fire button
-#define PIN_BEEP    PA1   // pin connected to buzzer
-#define PIN_PAD     PC4   // pin conected to direction buttons
-#define PIN_SCL     PC2   // pin connected to OLED (I2C SCL)
-#define PIN_SDA     PC1   // pin connected to OLED (I2C SDA)
+#define PIN_ACT PA2  // pin connected to fire button
+// #define PIN_BEEP PA1  // pin connected to buzzer
+// #define PIN_PAD  PC4  // pin conected to direction buttons
+#define BUTTON_RIGHT_PIN PD0
+#define BUTTON_LEFT_PIN  PC3
+#define BUTTON_UP_PIN    PC4
+// #define BUTTON_RIGHT_PIN PA2
+#define BUTTON_DOWN_PIN PC6
+#define PIN_SCL         PC2  // pin connected to OLED (I2C SCL)
+#define PIN_SDA         PC1  // pin connected to OLED (I2C SDA)
 
 // Joypad calibration values
-#define JOY_N       197   // joypad UP
-#define JOY_NE      259   // joypad UP + RIGHT
-#define JOY_E       90    // joypad RIGHT
-#define JOY_SE      388   // joypad DOWN + RIGHT
-#define JOY_S       346   // joypad DOWN
-#define JOY_SW      616   // joypad DOWN + LEFT
-#define JOY_W       511   // joypad LEFT
-#define JOY_NW      567   // JOYPAD UP + LEFT
-#define JOY_DEV     20    // deviation
+#define JOY_N   197  // joypad UP
+#define JOY_NE  259  // joypad UP + RIGHT
+#define JOY_E   90   // joypad RIGHT
+#define JOY_SE  388  // joypad DOWN + RIGHT
+#define JOY_S   346  // joypad DOWN
+#define JOY_SW  616  // joypad DOWN + LEFT
+#define JOY_W   511  // joypad LEFT
+#define JOY_NW  567  // JOYPAD UP + LEFT
+#define JOY_DEV 20   // deviation
 
 // Sound enable
-#define JOY_SOUND   1     // 0: no sound, 1: with sound
+#define JOY_SOUND 1  // 0: no sound, 1: with sound
 
 // Game slow-down delay
-#define JOY_SLOWDOWN()    //DLY_ms(10)
+#define JOY_SLOWDOWN()  // DLY_ms(10)
 
 // Init driver
 static inline void JOY_init(void) {
-  PIN_input_AN(PIN_PAD);
-  PIN_input_PU(PIN_ACT);
-  PIN_output(PIN_BEEP);
-  PIN_high(PIN_BEEP);
+  // PIN_input_AN(PIN_PAD);
+  // PIN_input_PU(PIN_ACT);
+  // PIN_output(PIN_BEEP);
+  // PIN_high(PIN_BEEP);
+  PIN_input_PU(BUTTON_RIGHT_PIN);
+  PIN_input_PU(BUTTON_LEFT_PIN);
+  PIN_input_PU(BUTTON_UP_PIN);
+  PIN_input_PU(BUTTON_DOWN_PIN);
   OLED_init();
-  ADC_init();
-  ADC_input(PIN_PAD);
+  // ADC_init();
+  // ADC_input(PIN_PAD);
 }
 
 // OLED commands
-#define JOY_OLED_init             OLED_init
-#define JOY_OLED_end              I2C_stop
-#define JOY_OLED_send(b)          I2C_write(b)
-#define JOY_OLED_send_command(c)  OLED_send_command(c)
-#define JOY_OLED_data_start(y)    {OLED_setpos(0,y);OLED_data_start();}
+#define JOY_OLED_init            OLED_init
+#define JOY_OLED_end             I2C_stop
+#define JOY_OLED_send(b)         I2C_write(b)
+#define JOY_OLED_send_command(c) OLED_send_command(c)
+#define JOY_OLED_data_start(y) \
+  {                            \
+    OLED_setpos(0, y);         \
+    OLED_data_start();         \
+  }
 
 // Buttons
-#define JOY_act_pressed()         (!PIN_read(PIN_ACT))
-#define JOY_act_released()        (PIN_read(PIN_ACT))
-#define JOY_pad_pressed()         (ADC_read() > 10)
-#define JOY_pad_released()        (ADC_read() <= 10)
-#define JOY_all_released()        (JOY_act_released() && JOY_pad_released())
+#define JOY_act_pressed()  (!PIN_read(PIN_ACT))
+#define JOY_act_released() (PIN_read(PIN_ACT))
+#define JOY_pad_pressed()  (ADC_read() > 10)
+#define JOY_pad_released() (ADC_read() <= 10)
+#define JOY_all_released() (JOY_act_released() && JOY_pad_released())
 
 static inline uint8_t JOY_up_pressed(void) {
- uint16_t val = ADC_read();
- return(   ((val > JOY_N  - JOY_DEV) && (val < JOY_N  + JOY_DEV))
-         | ((val > JOY_NE - JOY_DEV) && (val < JOY_NE + JOY_DEV))
-         | ((val > JOY_NW - JOY_DEV) && (val < JOY_NW + JOY_DEV)) );
+  // uint16_t val = ADC_read();
+  // return (((val > JOY_N - JOY_DEV) && (val < JOY_N + JOY_DEV)) |
+  //         ((val > JOY_NE - JOY_DEV) && (val < JOY_NE + JOY_DEV)) |
+  //         ((val > JOY_NW - JOY_DEV) && (val < JOY_NW + JOY_DEV)));
+  return !PIN_read(BUTTON_UP_PIN);
 }
 
 static inline uint8_t JOY_down_pressed(void) {
- uint16_t val = ADC_read();
- return(   ((val > JOY_S  - JOY_DEV) && (val < JOY_S  + JOY_DEV))
-         | ((val > JOY_SE - JOY_DEV) && (val < JOY_SE + JOY_DEV))
-         | ((val > JOY_SW - JOY_DEV) && (val < JOY_SW + JOY_DEV)) );
+  // uint16_t val = ADC_read();
+  // return (((val > JOY_S - JOY_DEV) && (val < JOY_S + JOY_DEV)) |
+  //         ((val > JOY_SE - JOY_DEV) && (val < JOY_SE + JOY_DEV)) |
+  //         ((val > JOY_SW - JOY_DEV) && (val < JOY_SW + JOY_DEV)));
+  return !PIN_read(BUTTON_DOWN_PIN);
 }
 
 static inline uint8_t JOY_left_pressed(void) {
- uint16_t val = ADC_read();
- return(   ((val > JOY_W  - JOY_DEV) && (val < JOY_W  + JOY_DEV))
-         | ((val > JOY_NW - JOY_DEV) && (val < JOY_NW + JOY_DEV))
-         | ((val > JOY_SW - JOY_DEV) && (val < JOY_SW + JOY_DEV)) );
+  // uint16_t val = ADC_read();
+  // return (((val > JOY_W - JOY_DEV) && (val < JOY_W + JOY_DEV)) |
+  //         ((val > JOY_NW - JOY_DEV) && (val < JOY_NW + JOY_DEV)) |
+  //         ((val > JOY_SW - JOY_DEV) && (val < JOY_SW + JOY_DEV)));
+  return !PIN_read(BUTTON_LEFT_PIN);
 }
 
 static inline uint8_t JOY_right_pressed(void) {
- uint16_t val = ADC_read();
- return(   ((val > JOY_E  - JOY_DEV) && (val < JOY_E  + JOY_DEV))
-         | ((val > JOY_NE - JOY_DEV) && (val < JOY_NE + JOY_DEV))
-         | ((val > JOY_SE - JOY_DEV) && (val < JOY_SE + JOY_DEV)) );
+  // uint16_t val = ADC_read();
+  // return (((val > JOY_E - JOY_DEV) && (val < JOY_E + JOY_DEV)) |
+  //         ((val > JOY_NE - JOY_DEV) && (val < JOY_NE + JOY_DEV)) |
+  //         ((val > JOY_SE - JOY_DEV) && (val < JOY_SE + JOY_DEV)));
+  return !PIN_read(BUTTON_RIGHT_PIN);
 }
 
 // Buzzer
 void JOY_sound(uint8_t freq, uint8_t dur) {
-  while(dur--) {
-    #if JOY_SOUND == 1
-    if(freq) PIN_low(PIN_BEEP);
-    #endif
-    Delay_Us(255 - freq);
-    PIN_high(PIN_BEEP);
-    Delay_Us(255 - freq);
-  }
+  //   while (dur--) {
+  // #if JOY_SOUND == 1
+  //     if (freq)
+  //       PIN_low(PIN_BEEP);
+  // #endif
+  //     Delay_Us(255 - freq);
+  //     PIN_high(PIN_BEEP);
+  //     Delay_Us(255 - freq);
+  //   }
 }
 
 // Pseudo random number generator
@@ -112,11 +132,11 @@ uint16_t JOY_random(void) {
 }
 
 // Delays
-#define JOY_DLY_ms    Delay_Ms
-#define JOY_DLY_us    Delay_Us
+#define JOY_DLY_ms Delay_Ms
+#define JOY_DLY_us Delay_Us
 
 // Additional Defines
-#define abs(n) ((n>=0)?(n):(-(n)))
+#define abs(n) ((n >= 0) ? (n) : (-(n)))
 
 long map(long x, long in_min, long in_max, long out_min, long out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
