@@ -17,8 +17,9 @@ extern "C" {
 #include "gpio.h"
 #include "oled_min.h"
 
+// #define DEBUG_ENABLE 1
+
 // Pin assignments
-#define PIN_ACT PA2  // pin connected to fire button
 // #define PIN_BEEP PA1  // pin connected to buzzer
 // #define PIN_PAD  PC4  // pin conected to direction buttons
 #define BUTTON_RIGHT_PIN PD0
@@ -26,8 +27,18 @@ extern "C" {
 #define BUTTON_UP_PIN    PC4
 // #define BUTTON_RIGHT_PIN PA2
 #define BUTTON_DOWN_PIN PC6
-#define PIN_SCL         PC2  // pin connected to OLED (I2C SCL)
-#define PIN_SDA         PC1  // pin connected to OLED (I2C SDA)
+
+#define LED1_PIN PD3
+#define LED2_PIN PD5
+#define LED3_PIN PD4
+#define LED4_PIN PA1
+#define LED5_PIN PD2
+#define LED6_PIN PC5
+#define LED7_PIN PC0
+#define LED8_PIN PD6
+
+#define PIN_SCL PC2  // pin connected to OLED (I2C SCL)
+#define PIN_SDA PC1  // pin connected to OLED (I2C SDA)
 
 // Joypad calibration values
 #define JOY_N   197  // joypad UP
@@ -46,17 +57,32 @@ extern "C" {
 // Game slow-down delay
 #define JOY_SLOWDOWN()  // DLY_ms(10)
 
+uint8_t leds[] = {LED1_PIN,
+#ifndef DEBUG_ENABLE
+                  LED2_PIN,
+#endif
+                  LED3_PIN, LED4_PIN, LED5_PIN, LED6_PIN, LED7_PIN, LED8_PIN};
+
 // Init driver
 static inline void JOY_init(void) {
   // PIN_input_AN(PIN_PAD);
-  // PIN_input_PU(PIN_ACT);
   // PIN_output(PIN_BEEP);
   // PIN_high(PIN_BEEP);
 
-  // PIN_input_PU(BUTTON_RIGHT_PIN);
-  // PIN_input_PU(BUTTON_LEFT_PIN);
-  // PIN_input_PU(BUTTON_UP_PIN);
-  // PIN_input_PU(BUTTON_DOWN_PIN);
+  // Enable GPIO Ports
+  PORTS_enable();
+
+  // Set LED pins as output
+  PIN_output(LED1_PIN);
+#ifndef DEBUG_ENABLE
+  PIN_output(LED2_PIN);
+#endif
+  PIN_output(LED3_PIN);
+  PIN_output(LED4_PIN);
+  PIN_output(LED5_PIN);
+  PIN_output(LED6_PIN);
+  PIN_output(LED7_PIN);
+  PIN_output(LED8_PIN);
 
   GPIO_InitTypeDef GPIO_InitStruct;
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -87,11 +113,8 @@ static inline void JOY_init(void) {
   }
 
 // Buttons
-#define JOY_act_pressed()  (!PIN_read(PIN_ACT))
-#define JOY_act_released() (PIN_read(PIN_ACT))
 #define JOY_pad_pressed()  (ADC_read() > 10)
 #define JOY_pad_released() (ADC_read() <= 10)
-#define JOY_all_released() (JOY_act_released() && JOY_pad_released())
 
 static inline uint8_t JOY_up_pressed(void) {
   // uint16_t val = ADC_read();

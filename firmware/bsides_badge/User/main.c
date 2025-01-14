@@ -243,41 +243,27 @@ int main(void) {
   USARTx_CFG();
   printf("BSides Badges\r\n");
 
-  // while(1)
-  // {
-  //     static uint8_t counter = 0;
-  //     counter++;
-  //     printf("Hola %d\r\n", counter);
-  //     Delay_Ms(1000);
-  //     // while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET)
-  //     // {
-  //     //     /* waiting for receiving finish */
-  //     // }
-  //     // val = (USART_ReceiveData(USART1));
-  //     // USART_SendData(USART1, ~val);
-  //     // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
-  //     // {
-  //     //     /* waiting for sending finish */
-  //     // }
-  // }
-
+#ifdef DEBUG_ENABLE
   // Setup
+  printf("Starting in:\r\n");
+  for (uint8_t i = 0; i < 3; i++) {
+    printf("%d\r\n", 3 - i);
+    JOY_DLY_ms(1000);
+  }
+#endif
   JOY_init();
 
-  while (1) {
-    static uint8_t counter = 0;
-    counter++;
-    printf("%d\r\n", counter);
-    printf("Button right: %s\r\n",
-           JOY_right_pressed() ? "pressed" : "released");
-    printf("Button left: %s\r\n", JOY_left_pressed() ? "pressed" : "released");
-    printf("Button up: %s\r\n", JOY_up_pressed() ? "pressed" : "released");
-    printf("Button down: %s\r\n", JOY_down_pressed() ? "pressed" : "released");
-    printf("----------------\r\n");
-    JOY_DLY_ms(1000);
+  // Blink all the LEDs
+  uint8_t delay = 50;
+  for (uint8_t i = 0; i < 8; i++) {
+    PIN_high(leds[i]);
+    JOY_DLY_ms(delay);
+    PIN_low(leds[i]);
+    JOY_DLY_ms(delay);
   }
 
   // Loop
+  printf("Starting...\r\n");
   while (1) {
     Reset_Value_TTRIS();
     if ((JOY_down_pressed())) {
@@ -319,7 +305,8 @@ int main(void) {
         Tiny_Flip_TTRIS(128);
       }
 
-      if ((JOY_act_pressed()) && (Ripple_filter_TTRIS == 0)) {
+      // Toggle the item
+      if ((JOY_up_pressed()) && (Ripple_filter_TTRIS == 0)) {
         PSEUDO_RND_TTRIS();
         Ripple_filter_TTRIS = 1;
       }
@@ -396,7 +383,7 @@ void INTRO_MANIFEST_TTRIS(void) {
   Flip_intro_TTRIS(&TIMER_1);
   while (1) {
     PIECEs_TTRIS = PSEUDO_RND_TTRIS();
-    if (JOY_act_pressed()) {
+    if (JOY_right_pressed()) {
       reset_Score_TTRIS();
       break;
     }
@@ -469,7 +456,8 @@ void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
     PSEUDO_RND_TTRIS();
   }
 
-  if (JOY_act_released()) {
+  // Toggle the item
+  if (!JOY_right_pressed()) {
     if ((OU_SUIS_JE_X_ENGAGED_TTRIS == 0) &&
         (OU_SUIS_JE_Y_ENGAGED_TTRIS == 0)) {
       Ripple_filter_TTRIS = 0;
