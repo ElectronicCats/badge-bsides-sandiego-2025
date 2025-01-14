@@ -52,10 +52,24 @@ static inline void JOY_init(void) {
   // PIN_input_PU(PIN_ACT);
   // PIN_output(PIN_BEEP);
   // PIN_high(PIN_BEEP);
-  PIN_input_PU(BUTTON_RIGHT_PIN);
-  PIN_input_PU(BUTTON_LEFT_PIN);
-  PIN_input_PU(BUTTON_UP_PIN);
-  PIN_input_PU(BUTTON_DOWN_PIN);
+
+  // PIN_input_PU(BUTTON_RIGHT_PIN);
+  // PIN_input_PU(BUTTON_LEFT_PIN);
+  // PIN_input_PU(BUTTON_UP_PIN);
+  // PIN_input_PU(BUTTON_DOWN_PIN);
+
+  GPIO_InitTypeDef GPIO_InitStruct;
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;
+  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_6;
+  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_30MHz;
+  GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;
+  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
+  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_30MHz;
+  GPIO_Init(GPIOD, &GPIO_InitStruct);
+
   OLED_init();
   // ADC_init();
   // ADC_input(PIN_PAD);
