@@ -21,6 +21,7 @@
  *
  */
 
+#include "bitmaps.h"
 #include "debug.h"
 
 /* Global define */
@@ -62,47 +63,6 @@ void USARTx_CFG(void) {
   USART_Cmd(USART1, ENABLE);
 }
 
-/*********************************************************************
- * @fn      main
- *
- * @brief   Main program.
- *
- * @return  none
- */
-// int main(void)
-// {
-//     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-//     SystemCoreClockUpdate();
-//     Delay_Init();
-// #if (SDI_PRINT == SDI_PR_OPEN)
-//     SDI_Printf_Enable();
-// #else
-//     USART_Printf_Init(115200);
-// #endif
-//     printf("SystemClk:%d\r\n",SystemCoreClock);
-//     printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
-
-//     USARTx_CFG();
-
-//     while(1)
-//     {
-//         static uint8_t counter = 0;
-//         counter++;
-//         printf("Hola %d\r\n", counter);
-//         Delay_Ms(1000);
-//         // while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET)
-//         // {
-//         //     /* waiting for receiving finish */
-//         // }
-//         // val = (USART_ReceiveData(USART1));
-//         // USART_SendData(USART1, ~val);
-//         // while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
-//         // {
-//         //     /* waiting for sending finish */
-//         // }
-//     }
-// }
-
 // ===================================================================================
 // Project:   Tiny Tris - Conversion for CH32V003
 // Version:   v1.0
@@ -133,6 +93,7 @@ void USARTx_CFG(void) {
 // https://github.com/wagiminator
 // ===================================================================================
 
+#include "../SSD1306/include/ssd1306.h"
 #include "driver.h"
 #include "spritebank.h"
 
@@ -237,33 +198,30 @@ int main(void) {
 #else
   USART_Printf_Init(115200);
 #endif
-  printf("SystemClk:%d\r\n", SystemCoreClock);
-  printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
+  APP_DBG("SystemClk: %d MHz", SystemCoreClock / 1000000);
+  APP_DBG("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
 
-  USARTx_CFG();
-  printf("BSides Badges\r\n");
-
-#ifdef DEBUG_ENABLE
   // Setup
-  printf("Starting in:\r\n");
-  for (uint8_t i = 0; i < 3; i++) {
-    printf("%d\r\n", 3 - i);
-    JOY_DLY_ms(1000);
-  }
-#endif
+  USARTx_CFG();
   JOY_init();
+  ssd1306_setbuf(0);
+  ssd1306_refresh();
+  ssd1306_drawImage(0, 0, epd_bitmap_bsides_logo, 128, 32, 0);
+  ssd1306_refresh();
 
   // Blink all the LEDs
   uint8_t delay = 50;
-  for (uint8_t i = 0; i < 8; i++) {
+  uint8_t leds_count = sizeof(leds) / sizeof(leds[0]);
+  for (uint8_t i = 0; i < leds_count; i++) {
     PIN_high(leds[i]);
     JOY_DLY_ms(delay);
     PIN_low(leds[i]);
     JOY_DLY_ms(delay);
   }
+  Delay_Ms(500);  // Keep the logo on the screen for a while
 
   // Loop
-  printf("Starting...\r\n");
+  APP_DBG("Starting...\r\n");
   while (1) {
     Reset_Value_TTRIS();
     if ((JOY_down_pressed())) {

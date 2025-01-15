@@ -17,7 +17,14 @@ extern "C" {
 #include "gpio.h"
 #include "oled_min.h"
 
-// #define DEBUG_ENABLE 1
+#define DEBUG_ENABLE 1
+
+#define APP_DBG(X...)             \
+  if (1) {                        \
+    PRINT("[%s] ", __FUNCTION__); \
+    PRINT(X);                     \
+    PRINT("\r\n");                \
+  }
 
 // Pin assignments
 // #define PIN_BEEP PA1  // pin connected to buzzer
