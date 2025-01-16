@@ -64,7 +64,7 @@ int main() {
   JOY_init();
   ssd1306_setbuf(0);
   ssd1306_refresh();
-  ssd1306_drawImage(0, 0, epd_bitmap_bsides_logo, 128, 32, 0);
+  ssd1306_drawImage(epd_bitmap_bsides_logo, 0, 0, 128, 32, 0);
   ssd1306_refresh();
 
   // Blink all the LEDs

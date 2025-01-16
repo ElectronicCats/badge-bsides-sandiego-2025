@@ -89,7 +89,7 @@ uint8_t ssd1306_buffer[SSD1306_W * SSD1306_H / 8];
 /*
  * set the buffer to a color
  */
-void ssd1306_setbuf(uint8_t color) {
+void ssd1306_setbuf(ssd1306_color_mode_t color) {
   memset(ssd1306_buffer, color ? 0xFF : 0x00, sizeof(ssd1306_buffer));
 }
 
@@ -152,7 +152,7 @@ void ssd1306_refresh(void) {
 /*
  * plot a pixel in the buffer
  */
-void ssd1306_drawPixel(uint8_t x, uint8_t y, uint8_t color) {
+void ssd1306_drawPixel(uint8_t x, uint8_t y, ssd1306_color_mode_t color) {
   uint16_t addr;
 
   /* clip */
@@ -193,12 +193,12 @@ void ssd1306_xorPixel(uint8_t x, uint8_t y) {
  * draw a an image from an array, directly into to the display buffer
  * the color modes allow for overwriting and even layering (sprites!)
  */
-void ssd1306_drawImage(uint8_t x,
+void ssd1306_drawImage(const unsigned char* input,
+                       uint8_t x,
                        uint8_t y,
-                       const unsigned char* input,
                        uint8_t width,
                        uint8_t height,
-                       uint8_t color_mode) {
+                       ssd1306_color_mode_t color_mode) {
   uint8_t x_absolute;
   uint8_t y_absolute;
   uint8_t pixel;
@@ -274,7 +274,10 @@ void ssd1306_drawImage(uint8_t x,
 /*
  *  fast vert line
  */
-void ssd1306_drawFastVLine(uint8_t x, uint8_t y, uint8_t h, uint8_t color) {
+void ssd1306_drawFastVLine(uint8_t x,
+                           uint8_t y,
+                           uint8_t h,
+                           ssd1306_color_mode_t color) {
   // clipping
   if ((x >= SSD1306_W) || (y >= SSD1306_H))
     return;
@@ -288,7 +291,10 @@ void ssd1306_drawFastVLine(uint8_t x, uint8_t y, uint8_t h, uint8_t color) {
 /*
  *  fast horiz line
  */
-void ssd1306_drawFastHLine(uint8_t x, uint8_t y, uint8_t w, uint8_t color) {
+void ssd1306_drawFastHLine(uint8_t x,
+                           uint8_t y,
+                           uint8_t w,
+                           ssd1306_color_mode_t color) {
   // clipping
   if ((x >= SSD1306_W) || (y >= SSD1306_H))
     return;
@@ -323,7 +329,7 @@ void ssd1306_drawLine(uint16_t x0,
                       uint16_t y0,
                       uint16_t x1,
                       uint16_t y1,
-                      uint8_t color) {
+                      ssd1306_color_mode_t color) {
   int16_t steep;
   int16_t deltax, deltay, error, ystep, x, y;
 
@@ -375,7 +381,10 @@ void ssd1306_drawLine(uint16_t x0,
 /*
  *  draws a circle
  */
-void ssd1306_drawCircle(int16_t x, int16_t y, int16_t radius, int8_t color) {
+void ssd1306_drawCircle(int16_t x,
+                        int16_t y,
+                        int16_t radius,
+                        ssd1306_color_mode_t color) {
   /* Bresenham algorithm */
   int16_t x_pos = -radius;
   int16_t y_pos = 0;
@@ -403,7 +412,10 @@ void ssd1306_drawCircle(int16_t x, int16_t y, int16_t radius, int8_t color) {
 /*
  *  draws a filled circle
  */
-void ssd1306_fillCircle(int16_t x, int16_t y, int16_t radius, int8_t color) {
+void ssd1306_fillCircle(int16_t x,
+                        int16_t y,
+                        int16_t radius,
+                        ssd1306_color_mode_t color) {
   /* Bresenham algorithm */
   int16_t x_pos = -radius;
   int16_t y_pos = 0;
@@ -437,7 +449,7 @@ void ssd1306_drawRect(uint8_t x,
                       uint8_t y,
                       uint8_t w,
                       uint8_t h,
-                      uint8_t color) {
+                      ssd1306_color_mode_t color) {
   ssd1306_drawFastVLine(x, y, h, color);
   ssd1306_drawFastVLine(x + w - 1, y, h, color);
   ssd1306_drawFastHLine(x, y, w, color);
@@ -451,7 +463,7 @@ void ssd1306_fillRect(uint8_t x,
                       uint8_t y,
                       uint8_t w,
                       uint8_t h,
-                      uint8_t color) {
+                      ssd1306_color_mode_t color) {
   uint8_t m, n = y, iw = w;
 
   /* scan vertical */
@@ -489,7 +501,10 @@ void ssd1306_xorrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
 /*
  * Draw character to the display buffer
  */
-void ssd1306_drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color) {
+void ssd1306_drawchar(uint8_t chr,
+                      uint8_t x,
+                      uint8_t y,
+                      ssd1306_color_mode_t color) {
   uint16_t i, j, col;
   uint8_t d;
 
@@ -512,11 +527,14 @@ void ssd1306_drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color) {
 /*
  * draw a string to the display
  */
-void ssd1306_drawstr(uint8_t x, uint8_t y, char* str, uint8_t color) {
+void ssd1306_drawstr(char* str,
+                     uint8_t x,
+                     uint8_t y,
+                     ssd1306_color_mode_t color) {
   uint8_t c;
 
   while ((c = *str++)) {
-    ssd1306_drawchar(x, y, c, color);
+    ssd1306_drawchar(c, x, y, color);
     x += 8;
     if (x > 120)
       break;
@@ -536,10 +554,10 @@ void ssd1306_drawstr(uint8_t x, uint8_t y, char* str, uint8_t color) {
 /*
  * Draw character to the display buffer, scaled to size
  */
-void ssd1306_drawchar_sz(uint8_t x,
+void ssd1306_drawchar_sz(uint8_t chr,
+                         uint8_t x,
                          uint8_t y,
-                         uint8_t chr,
-                         uint8_t color,
+                         ssd1306_color_mode_t color,
                          font_size_t font_size) {
   uint16_t i, j, col;
   uint8_t d;
@@ -578,15 +596,15 @@ void ssd1306_drawchar_sz(uint8_t x,
 /*
  * draw a string to the display buffer, scaled to size
  */
-void ssd1306_drawstr_sz(uint8_t x,
+void ssd1306_drawstr_sz(char* str,
+                        uint8_t x,
                         uint8_t y,
-                        char* str,
-                        uint8_t color,
+                        ssd1306_color_mode_t color,
                         font_size_t font_size) {
   uint8_t c;
 
   while ((c = *str++)) {
-    ssd1306_drawchar_sz(x, y, c, color, font_size);
+    ssd1306_drawchar_sz(c, x, y, color, font_size);
     x += 8 * font_size;
     if (x > 128 - 8 * font_size)
       break;

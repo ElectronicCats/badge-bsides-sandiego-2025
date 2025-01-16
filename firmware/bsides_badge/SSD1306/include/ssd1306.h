@@ -43,6 +43,11 @@
   #define SSD1306_OFFSET 0
 #endif
 
+typedef enum {
+  COLOR_INVERT = 0,
+  COLOR_NORMAL,
+} ssd1306_color_mode_t;
+
 /*
  * send OLED command byte
  */
@@ -95,7 +100,7 @@ extern uint8_t ssd1306_buffer[SSD1306_W * SSD1306_H / 8];
 /*
  * set the buffer to a color
  */
-void ssd1306_setbuf(uint8_t color);
+void ssd1306_setbuf(ssd1306_color_mode_t color);
 
 #ifndef SSD1306_FULLUSE
 /*
@@ -112,33 +117,49 @@ void ssd1306_refresh(void);
 /*
  * plot a pixel in the buffer
  */
-void ssd1306_drawPixel(uint8_t x, uint8_t y, uint8_t color);
+void ssd1306_drawPixel(uint8_t x, uint8_t y, ssd1306_color_mode_t color);
 
 /*
  * plot a pixel in the buffer
  */
 void ssd1306_xorPixel(uint8_t x, uint8_t y);
 
-/*
- * draw a an image from an array, directly into to the display buffer
- * the color modes allow for overwriting and even layering (sprites!)
+/**
+ * @brief Draw an image from an array, directly into to the display buffer
+ *
+ * @param input
+ * @param x
+ * @param y
+ * @param width
+ * @param height
+ * @param color_mode
+ *
+ * @note The color modes allow for overwriting and even layering (sprites!)
+ *
+ * @return void
  */
-void ssd1306_drawImage(uint8_t x,
+void ssd1306_drawImage(const unsigned char* input,
+                       uint8_t x,
                        uint8_t y,
-                       const unsigned char* input,
                        uint8_t width,
                        uint8_t height,
-                       uint8_t color_mode);
+                       ssd1306_color_mode_t color_mode);
 
 /*
  *  fast vert line
  */
-void ssd1306_drawFastVLine(uint8_t x, uint8_t y, uint8_t h, uint8_t color);
+void ssd1306_drawFastVLine(uint8_t x,
+                           uint8_t y,
+                           uint8_t h,
+                           ssd1306_color_mode_t color);
 
 /*
  *  fast horiz line
  */
-void ssd1306_drawFastHLine(uint8_t x, uint8_t y, uint8_t w, uint8_t color);
+void ssd1306_drawFastHLine(uint8_t x,
+                           uint8_t y,
+                           uint8_t w,
+                           ssd1306_color_mode_t color);
 
 /*
  * abs() helper function for line drawing
@@ -157,17 +178,23 @@ void ssd1306_drawLine(uint16_t x0,
                       uint16_t y0,
                       uint16_t x1,
                       uint16_t y1,
-                      uint8_t color);
+                      ssd1306_color_mode_t color);
 
 /*
  *  draws a circle
  */
-void ssd1306_drawCircle(int16_t x, int16_t y, int16_t radius, int8_t color);
+void ssd1306_drawCircle(int16_t x,
+                        int16_t y,
+                        int16_t radius,
+                        ssd1306_color_mode_t color);
 
 /*
  *  draws a filled circle
  */
-void ssd1306_fillCircle(int16_t x, int16_t y, int16_t radius, int8_t color);
+void ssd1306_fillCircle(int16_t x,
+                        int16_t y,
+                        int16_t radius,
+                        ssd1306_color_mode_t color);
 
 /*
  *  draw a rectangle
@@ -176,7 +203,7 @@ void ssd1306_drawRect(uint8_t x,
                       uint8_t y,
                       uint8_t w,
                       uint8_t h,
-                      uint8_t color);
+                      ssd1306_color_mode_t color);
 
 /*
  * fill a rectangle
@@ -185,22 +212,42 @@ void ssd1306_fillRect(uint8_t x,
                       uint8_t y,
                       uint8_t w,
                       uint8_t h,
-                      uint8_t color);
+                      ssd1306_color_mode_t color);
 
 /*
  * invert a rectangle in the buffer
  */
 void ssd1306_xorrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 
-/*
- * Draw character to the display buffer
+/**
+ * @brief Draw character to the display buffer
+ *
+ * @param chr
+ * @param x
+ * @param y
+ * @param color
+ *
+ * @return void
  */
-void ssd1306_drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color);
+void ssd1306_drawchar(uint8_t chr,
+                      uint8_t x,
+                      uint8_t y,
+                      ssd1306_color_mode_t color);
 
-/*
- * draw a string to the display
+/**
+ * @brief draw a string to the display
+ *
+ * @param str
+ * @param x
+ * @param y
+ * @param color
+ *
+ * @return void
  */
-void ssd1306_drawstr(uint8_t x, uint8_t y, char* str, uint8_t color);
+void ssd1306_drawstr(char* str,
+                     uint8_t x,
+                     uint8_t y,
+                     ssd1306_color_mode_t color);
 
 /*
  * enum for font size
@@ -212,22 +259,38 @@ typedef enum {
   fontsize_64x64 = 8,
 } font_size_t;
 
-/*
- * Draw character to the display buffer, scaled to size
+/**
+ * @brief Draw character to the display buffer, scaled to size
+ *
+ * @param chr
+ * @param x
+ * @param y
+ * @param color
+ * @param font_size
+ *
+ * @return void
  */
-void ssd1306_drawchar_sz(uint8_t x,
+void ssd1306_drawchar_sz(uint8_t chr,
+                         uint8_t x,
                          uint8_t y,
-                         uint8_t chr,
-                         uint8_t color,
+                         ssd1306_color_mode_t color,
                          font_size_t font_size);
 
-/*
- * draw a string to the display buffer, scaled to size
+/**
+ * @brief Draw a string to the display buffer, scaled to size
+ *
+ * @param str
+ * @param x
+ * @param y
+ * @param color
+ * @param font_size
+ *
+ * @return void
  */
-void ssd1306_drawstr_sz(uint8_t x,
+void ssd1306_drawstr_sz(char* str,
+                        uint8_t x,
                         uint8_t y,
-                        char* str,
-                        uint8_t color,
+                        ssd1306_color_mode_t color,
                         font_size_t font_size);
 
 /*
