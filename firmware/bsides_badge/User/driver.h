@@ -61,52 +61,24 @@ extern "C" {
 // Sound enable
 #define JOY_SOUND 1  // 0: no sound, 1: with sound
 
+// Delays
+#define JOY_DLY_ms Delay_Ms
+#define JOY_DLY_us Delay_Us
+
+// Additional Defines
+#define abs(n) ((n >= 0) ? (n) : (-(n)))
+
 // Game slow-down delay
 #define JOY_SLOWDOWN()  // DLY_ms(10)
 
-uint8_t leds[] = {LED1_PIN,
-#ifndef DEBUG_ENABLE
-                  LED2_PIN,
-#endif
-                  LED3_PIN, LED4_PIN, LED5_PIN, LED6_PIN, LED7_PIN, LED8_PIN};
+extern uint8_t leds[];
+extern uint8_t leds_count;
 
-// Init driver
-static inline void JOY_init(void) {
-  // PIN_input_AN(PIN_PAD);
-  // PIN_output(PIN_BEEP);
-  // PIN_high(PIN_BEEP);
+#define JOY_pad_pressed()  (ADC_read() > 10)
+#define JOY_pad_released() (ADC_read() <= 10)
 
-  // Enable GPIO Ports
-  PORTS_enable();
-
-  // Set LED pins as output
-  PIN_output(LED1_PIN);
-#ifndef DEBUG_ENABLE
-  PIN_output(LED2_PIN);
-#endif
-  PIN_output(LED3_PIN);
-  PIN_output(LED4_PIN);
-  PIN_output(LED5_PIN);
-  PIN_output(LED6_PIN);
-  PIN_output(LED7_PIN);
-  PIN_output(LED8_PIN);
-
-  GPIO_InitTypeDef GPIO_InitStruct;
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;
-  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_6;
-  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_30MHz;
-  GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;
-  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
-  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_30MHz;
-  GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-  OLED_init();
-  // ADC_init();
-  // ADC_input(PIN_PAD);
-}
+// static inline void JOY_init(void);
+void JOY_init(void);
 
 // OLED commands
 #define JOY_OLED_init            OLED_init
@@ -123,68 +95,13 @@ static inline void JOY_init(void) {
 #define JOY_pad_pressed()  (ADC_read() > 10)
 #define JOY_pad_released() (ADC_read() <= 10)
 
-static inline uint8_t JOY_up_pressed(void) {
-  // uint16_t val = ADC_read();
-  // return (((val > JOY_N - JOY_DEV) && (val < JOY_N + JOY_DEV)) |
-  //         ((val > JOY_NE - JOY_DEV) && (val < JOY_NE + JOY_DEV)) |
-  //         ((val > JOY_NW - JOY_DEV) && (val < JOY_NW + JOY_DEV)));
-  return !PIN_read(BUTTON_UP_PIN);
-}
-
-static inline uint8_t JOY_down_pressed(void) {
-  // uint16_t val = ADC_read();
-  // return (((val > JOY_S - JOY_DEV) && (val < JOY_S + JOY_DEV)) |
-  //         ((val > JOY_SE - JOY_DEV) && (val < JOY_SE + JOY_DEV)) |
-  //         ((val > JOY_SW - JOY_DEV) && (val < JOY_SW + JOY_DEV)));
-  return !PIN_read(BUTTON_DOWN_PIN);
-}
-
-static inline uint8_t JOY_left_pressed(void) {
-  // uint16_t val = ADC_read();
-  // return (((val > JOY_W - JOY_DEV) && (val < JOY_W + JOY_DEV)) |
-  //         ((val > JOY_NW - JOY_DEV) && (val < JOY_NW + JOY_DEV)) |
-  //         ((val > JOY_SW - JOY_DEV) && (val < JOY_SW + JOY_DEV)));
-  return !PIN_read(BUTTON_LEFT_PIN);
-}
-
-static inline uint8_t JOY_right_pressed(void) {
-  // uint16_t val = ADC_read();
-  // return (((val > JOY_E - JOY_DEV) && (val < JOY_E + JOY_DEV)) |
-  //         ((val > JOY_NE - JOY_DEV) && (val < JOY_NE + JOY_DEV)) |
-  //         ((val > JOY_SE - JOY_DEV) && (val < JOY_SE + JOY_DEV)));
-  return !PIN_read(BUTTON_RIGHT_PIN);
-}
-
-// Buzzer
-void JOY_sound(uint8_t freq, uint8_t dur) {
-  //   while (dur--) {
-  // #if JOY_SOUND == 1
-  //     if (freq)
-  //       PIN_low(PIN_BEEP);
-  // #endif
-  //     Delay_Us(255 - freq);
-  //     PIN_high(PIN_BEEP);
-  //     Delay_Us(255 - freq);
-  //   }
-}
-
-// Pseudo random number generator
-uint16_t rnval = 0xACE1;
-uint16_t JOY_random(void) {
-  rnval = (rnval >> 0x01) ^ (-(rnval & 0x01) & 0xB400);
-  return rnval;
-}
-
-// Delays
-#define JOY_DLY_ms Delay_Ms
-#define JOY_DLY_us Delay_Us
-
-// Additional Defines
-#define abs(n) ((n >= 0) ? (n) : (-(n)))
-
-long map(long x, long in_min, long in_max, long out_min, long out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
+uint8_t JOY_up_pressed(void);
+uint8_t JOY_down_pressed(void);
+uint8_t JOY_left_pressed(void);
+uint8_t JOY_right_pressed(void);
+void JOY_sound(uint8_t freq, uint8_t dur);
+uint16_t JOY_random(void);
+long map(long x, long in_min, long in_max, long out_min, long out_max);
 
 #ifdef __cplusplus
 };
