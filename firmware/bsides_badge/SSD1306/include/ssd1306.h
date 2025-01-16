@@ -102,6 +102,13 @@ extern uint8_t ssd1306_buffer[SSD1306_W * SSD1306_H / 8];
  */
 void ssd1306_setbuf(ssd1306_color_mode_t color);
 
+/**
+ * @brief Clear the display buffer
+ *
+ * @return void
+ */
+void ssd1306_clear();
+
 #ifndef SSD1306_FULLUSE
 /*
  * expansion array for OLED with every other row unused

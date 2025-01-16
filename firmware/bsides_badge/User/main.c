@@ -27,6 +27,7 @@
 #include "ch32v003_flash.h"
 #include "debug.h"
 #include "driver.h"
+#include "hardware_tests.h"
 #include "tetris.h"
 
 // Define this constant to use compile-time
@@ -80,7 +81,8 @@ int main() {
 
   // Loop
   APP_DBG("Starting...\r\n");
-  tetris_start();
+  hardware_tests_start();
+  // tetris_start();
 }
 
 /*********************************************************************

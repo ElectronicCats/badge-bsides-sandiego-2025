@@ -93,6 +93,11 @@ void ssd1306_setbuf(ssd1306_color_mode_t color) {
   memset(ssd1306_buffer, color ? 0xFF : 0x00, sizeof(ssd1306_buffer));
 }
 
+void ssd1306_clear() {
+  ssd1306_setbuf(COLOR_INVERT);
+  ssd1306_refresh();
+}
+
 #ifndef SSD1306_FULLUSE
 /*
  * expansion array for OLED with every other row unused
