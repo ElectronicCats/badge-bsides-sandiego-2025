@@ -204,6 +204,7 @@ void ssd1306_drawImage(const unsigned char* input,
                        uint8_t width,
                        uint8_t height,
                        ssd1306_color_mode_t color_mode) {
+  x = x - 8;
   uint8_t x_absolute;
   uint8_t y_absolute;
   uint8_t pixel;
@@ -225,6 +226,7 @@ void ssd1306_drawImage(const unsigned char* input,
       uint8_t input_byte = input[byte + line * bytes_to_draw];
 
       for (pixel = 0; pixel < 8; pixel++) {
+        // x_absolute = x + 8 * (bytes_to_draw - byte) + pixel;
         x_absolute = x + 8 * (bytes_to_draw - byte) + pixel;
         if (x_absolute >= SSD1306_W) {
           break;
@@ -236,13 +238,13 @@ void ssd1306_drawImage(const unsigned char* input,
         uint8_t input_pixel = input_byte & (1 << pixel);
 
         switch (color_mode) {
-          case 0:
+          case COLOR_NORMAL:
             // write pixels as they are
             ssd1306_buffer[buffer_addr] =
                 (ssd1306_buffer[buffer_addr] & ~v_mask) |
                 (input_pixel ? v_mask : 0);
             break;
-          case 1:
+          case COLOR_INVERT:
             // write pixels after inversion
             ssd1306_buffer[buffer_addr] =
                 (ssd1306_buffer[buffer_addr] & ~v_mask) |

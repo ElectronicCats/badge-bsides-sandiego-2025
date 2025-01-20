@@ -65,7 +65,7 @@ int main() {
   JOY_init();
   ssd1306_setbuf(0);
   ssd1306_refresh();
-  ssd1306_drawImage(epd_bitmap_bsides_logo, 0, 0, 128, 32, 0);
+  ssd1306_drawImage(epd_bitmap_bsides_logo, 0, 0, 128, 32, COLOR_NORMAL);
   ssd1306_refresh();
 
   // Blink all the LEDs
@@ -81,7 +81,15 @@ int main() {
 
   // Loop
   APP_DBG("Starting...\r\n");
-  hardware_tests_start();
+  for (uint8_t i = 0; i < menus_count; i++) {
+    ssd1306_drawImage(menus_bitmaps[i], 0, 0, 128, 32, COLOR_NORMAL);
+    ssd1306_refresh();
+    Delay_Ms(1000);
+  }
+  while (1) {
+    Delay_Ms(1000);
+  }
+  // hardware_tests_start();
   // tetris_start();
 }
 
