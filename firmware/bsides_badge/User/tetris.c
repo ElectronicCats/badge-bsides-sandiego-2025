@@ -128,9 +128,9 @@ uint8_t checksum(uint8_t Byte_);
 int tetris_start() {
   while (1) {
     Reset_Value_TTRIS();
-    if ((JOY_down_pressed())) {
+    if ((joy_down_pressed())) {
       JOY_DLY_ms(1000);
-      if ((JOY_down_pressed())) {
+      if ((joy_down_pressed())) {
         save_HIGHSCORE_TTRIS();
       }
     }
@@ -168,7 +168,7 @@ int tetris_start() {
       }
 
       // Toggle the item
-      if ((JOY_up_pressed()) && (Ripple_filter_TTRIS == 0)) {
+      if ((joy_up_pressed()) && (Ripple_filter_TTRIS == 0)) {
         PSEUDO_RND_TTRIS();
         Ripple_filter_TTRIS = 1;
       }
@@ -245,7 +245,7 @@ void INTRO_MANIFEST_TTRIS(void) {
   Flip_intro_TTRIS(&TIMER_1);
   while (1) {
     PIECEs_TTRIS = PSEUDO_RND_TTRIS();
-    if (JOY_right_pressed()) {
+    if (joy_right_pressed()) {
       reset_Score_TTRIS();
       break;
     }
@@ -284,7 +284,7 @@ void SETUP_NEW_PREVIEW_PIECE_TTRIS(uint8_t* Rot_TTRIS) {
 void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
   if ((OU_SUIS_JE_X_ENGAGED_TTRIS == 0)) {
     if (SPEED_x_trig_TTRIS == 0) {
-      if (JOY_right_pressed()) {
+      if (joy_right_pressed()) {
         if (LONG_PRESS_X_TTRIS == 0) {
           SND_TTRIS(1);
         }
@@ -296,7 +296,7 @@ void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
           LONG_PRESS_X_TTRIS++;
         }
       }
-      if (JOY_left_pressed()) {
+      if (joy_left_pressed()) {
         if (LONG_PRESS_X_TTRIS == 0) {
           SND_TTRIS(1);
         }
@@ -313,13 +313,13 @@ void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
           (SPEED_x_trig_TTRIS > 0) ? SPEED_x_trig_TTRIS - 1 : 0;
     }
   }
-  if ((JOY_right_pressed() == 0) && (JOY_left_pressed() == 0)) {
+  if ((joy_right_pressed() == 0) && (joy_left_pressed() == 0)) {
     LONG_PRESS_X_TTRIS = 0;
     PSEUDO_RND_TTRIS();
   }
 
   // Toggle the item
-  if (!JOY_right_pressed()) {
+  if (!joy_right_pressed()) {
     if ((OU_SUIS_JE_X_ENGAGED_TTRIS == 0) &&
         (OU_SUIS_JE_Y_ENGAGED_TTRIS == 0)) {
       Ripple_filter_TTRIS = 0;
@@ -341,7 +341,7 @@ void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
   } else {
     DROP_SPEED_TTRIS = Level_Speed_ADJ_TTRIS;
   }
-  if (JOY_down_pressed()) {
+  if (joy_down_pressed()) {
     // ajouter cest 2 ligne
     if (OU_SUIS_JE_X_ENGAGED_TTRIS == 0) {
       DEPLACEMENT_XX_TTRIS = 0;

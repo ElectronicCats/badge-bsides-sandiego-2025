@@ -32,8 +32,11 @@ extern "C" {
 #define BUTTON_RIGHT_PIN PD0
 #define BUTTON_LEFT_PIN  PC3
 #define BUTTON_UP_PIN    PC4
-// #define BUTTON_RIGHT_PIN PA2
-#define BUTTON_DOWN_PIN PC6
+#ifdef DEBUG_ENABLE
+  #define BUTTON_DOWN_PIN PC6
+#else
+  #define BUTTON_DOWN_PIN PA2
+#endif
 
 #define LED1_PIN PD3
 #define LED2_PIN PD5
@@ -95,10 +98,10 @@ void JOY_init(void);
 #define JOY_pad_pressed()  (ADC_read() > 10)
 #define JOY_pad_released() (ADC_read() <= 10)
 
-uint8_t JOY_up_pressed(void);
-uint8_t JOY_down_pressed(void);
-uint8_t JOY_left_pressed(void);
-uint8_t JOY_right_pressed(void);
+uint8_t joy_up_pressed(void);
+uint8_t joy_down_pressed(void);
+uint8_t joy_left_pressed(void);
+uint8_t joy_right_pressed(void);
 void JOY_sound(uint8_t freq, uint8_t dur);
 uint16_t JOY_random(void);
 long map(long x, long in_min, long in_max, long out_min, long out_max);

@@ -27,7 +27,11 @@ void JOY_init(void) {
   GPIO_InitTypeDef GPIO_InitStruct;
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
   GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;
+#ifndef DEBUG_ENABLE
   GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_6;
+#else
+  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4;
+#endif
   GPIO_InitStruct.GPIO_Speed = GPIO_Speed_30MHz;
   GPIO_Init(GPIOC, &GPIO_InitStruct);
 
@@ -36,22 +40,30 @@ void JOY_init(void) {
   GPIO_InitStruct.GPIO_Speed = GPIO_Speed_30MHz;
   GPIO_Init(GPIOD, &GPIO_InitStruct);
 
+#ifndef DEBUG_ENABLE
+  GPIO_PinRemapConfig(GPIO_Remap_PA1_2, DISABLE);
+  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;
+  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_2;
+  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_30MHz;
+  GPIO_Init(GPIOA, &GPIO_InitStruct);
+#endif
+
   OLED_init();
 }
 
-uint8_t JOY_up_pressed(void) {
+uint8_t joy_up_pressed(void) {
   return !PIN_read(BUTTON_UP_PIN);
 }
 
-uint8_t JOY_down_pressed(void) {
+uint8_t joy_down_pressed(void) {
   return !PIN_read(BUTTON_DOWN_PIN);
 }
 
-uint8_t JOY_left_pressed(void) {
+uint8_t joy_left_pressed(void) {
   return !PIN_read(BUTTON_LEFT_PIN);
 }
 
-uint8_t JOY_right_pressed(void) {
+uint8_t joy_right_pressed(void) {
   return !PIN_read(BUTTON_RIGHT_PIN);
 }
 

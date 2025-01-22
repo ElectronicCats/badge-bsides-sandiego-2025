@@ -15,7 +15,7 @@ void test_buttons() {
   ssd1306_drawstr_sz("Right", 28, 16, COLOR_NORMAL, fontsize_16x16);
   ssd1306_refresh();
   while (1) {
-    if (JOY_right_pressed()) {
+    if (joy_right_pressed()) {
       break;
     }
     Delay_Ms(100);
@@ -26,7 +26,7 @@ void test_buttons() {
   ssd1306_drawstr_sz("Left", 28, 16, COLOR_NORMAL, fontsize_16x16);
   ssd1306_refresh();
   while (1) {
-    if (JOY_left_pressed()) {
+    if (joy_left_pressed()) {
       break;
     }
     Delay_Ms(100);
@@ -37,7 +37,7 @@ void test_buttons() {
   ssd1306_drawstr_sz("Up", 28, 16, COLOR_NORMAL, fontsize_16x16);
   ssd1306_refresh();
   while (1) {
-    if (JOY_up_pressed()) {
+    if (joy_up_pressed()) {
       break;
     }
     Delay_Ms(100);
@@ -48,7 +48,7 @@ void test_buttons() {
   ssd1306_drawstr_sz("Down", 28, 16, COLOR_NORMAL, fontsize_16x16);
   ssd1306_refresh();
   while (1) {
-    if (JOY_down_pressed()) {
+    if (joy_down_pressed()) {
       break;
     }
     Delay_Ms(100);
@@ -83,7 +83,7 @@ void test_leds() {
     }
 
     while (1) {
-      if (JOY_right_pressed()) {
+      if (joy_right_pressed()) {
         break;
       }
       Delay_Ms(100);

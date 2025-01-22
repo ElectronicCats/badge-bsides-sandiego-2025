@@ -28,6 +28,7 @@
 #include "debug.h"
 #include "driver.h"
 #include "hardware_tests.h"
+#include "menus.h"
 #include "tetris.h"
 
 // Define this constant to use compile-time
@@ -67,6 +68,7 @@ int main() {
   ssd1306_refresh();
   ssd1306_drawImage(epd_bitmap_bsides_logo, 0, 0, 128, 32, COLOR_NORMAL);
   ssd1306_refresh();
+  APP_DBG("Size of logo: %d\r\n bytes", sizeof(epd_bitmap_bsides_logo));
 
   // Blink all the LEDs
   uint8_t delay = 50;
@@ -81,15 +83,8 @@ int main() {
 
   // Loop
   APP_DBG("Starting...\r\n");
-  for (uint8_t i = 0; i < menus_count; i++) {
-    ssd1306_drawImage(menus_bitmaps[i], 0, 0, 128, 32, COLOR_NORMAL);
-    ssd1306_refresh();
-    Delay_Ms(1000);
-  }
-  while (1) {
-    Delay_Ms(1000);
-  }
   // hardware_tests_start();
+  menus_init();
   // tetris_start();
 }
 
