@@ -282,7 +282,9 @@ static const unsigned char epd_bitmap_menu_5[] = {
 
 // Array of all bitmaps for convenience. (Total bytes used to store images in
 // PROGMEM = 2640)
-static const int menus_count = 5;
-static const unsigned char* menus_bitmaps[5] = {
-    epd_bitmap_menu_1, epd_bitmap_menu_2, epd_bitmap_menu_3, epd_bitmap_menu_4,
-    epd_bitmap_menu_5};
+static const int menus_count = 3;
+// static const unsigned char* menus_bitmaps[5] = {
+//     epd_bitmap_menu_1, epd_bitmap_menu_2, epd_bitmap_menu_3,
+//     epd_bitmap_menu_4, epd_bitmap_menu_5};
+static const unsigned char* menus_bitmaps[3] = {
+    epd_bitmap_menu_1, epd_bitmap_menu_2, epd_bitmap_menu_3};

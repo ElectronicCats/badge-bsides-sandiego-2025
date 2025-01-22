@@ -17,7 +17,8 @@ extern "C" {
 #include "gpio.h"
 #include "oled_min.h"
 
-#define DEBUG_ENABLE 1
+// #define DEBUG_ENABLE 1
+#define DEV_VERSION 1
 
 #define APP_DBG(X...)             \
   if (1) {                        \
@@ -32,7 +33,7 @@ extern "C" {
 #define BUTTON_RIGHT_PIN PD0
 #define BUTTON_LEFT_PIN  PC3
 #define BUTTON_UP_PIN    PC4
-#ifdef DEBUG_ENABLE
+#ifdef DEV_VERSION
   #define BUTTON_DOWN_PIN PC6
 #else
   #define BUTTON_DOWN_PIN PA2

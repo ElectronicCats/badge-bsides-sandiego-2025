@@ -58,8 +58,6 @@ int main() {
 #else
   USART_Printf_Init(115200);
 #endif
-  APP_DBG("SystemClk: %d MHz", SystemCoreClock / 1000000);
-  APP_DBG("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
 
   // Setup
   USARTx_CFG();
@@ -68,7 +66,6 @@ int main() {
   ssd1306_refresh();
   ssd1306_drawImage(epd_bitmap_bsides_logo, 0, 0, 128, 32, COLOR_NORMAL);
   ssd1306_refresh();
-  APP_DBG("Size of logo: %d\r\n bytes", sizeof(epd_bitmap_bsides_logo));
 
   // Blink all the LEDs
   uint8_t delay = 50;
@@ -79,10 +76,7 @@ int main() {
     JOY_DLY_ms(delay);
   }
   Delay_Ms(500);  // Keep the logo on the screen for a while
-  flash_test();
-
-  // Loop
-  APP_DBG("Starting...\r\n");
+  // flash_test();
   // hardware_tests_start();
   menus_init();
   // tetris_start();

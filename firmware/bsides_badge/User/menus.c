@@ -11,13 +11,13 @@ typedef enum {
   MENU_SETTINGS,
   MENU_ABOUT,
   /* Settings layer */
-  MENU_USER_NAME,
-  MENU_LEDS,
+  // MENU_USER_NAME,
+  // MENU_LEDS,
   /************/
   MENU_COUNT
 } menu_item_t;
 
-const char* menu_names[] = {"Game", "Settings", "About", "Name", "LEDs"};
+char* menu_names[] = {"Game", "Name", "About"};
 
 typedef enum { LAYER_MAIN, LAYER_SETTINGS } layer_t;
 
@@ -25,12 +25,13 @@ static menu_item_t current_menu = MENU_GAME;
 // static layer_t current_layer = LAYER_MAIN;
 
 void display_menu() {
-  APP_DBG("Displaying %s", menu_names[current_menu]);
+  // APP_DBG("Displaying %s", menu_names[current_menu]);
   ssd1306_clear();
   ssd1306_drawImage(menus_bitmaps[current_menu], 0, 0, 128, 32, COLOR_NORMAL);
-  // ssd1306_drawstr_sz(menu_names[current_menu], 0, 0, COLOR_NORMAL,
-  // fontsize_16x16); ssd1306_drawstr(menu_names[current_menu], 0, 0,
-  // COLOR_NORMAL);
+  // ssd1306_drawstr_sz(menu_names[current_menu], 0, 0,
+  // COLOR_NORMAL,
+  //                    fontsize_16x16);
+  // ssd1306_drawstr(menu_names[current_menu], 0, 0, COLOR_NORMAL);
   ssd1306_refresh();
 }
 
@@ -58,24 +59,24 @@ void menus_init() {
     if (joy_down_pressed()) {
       menus_move_down();
     }
-    // if (joy_right_pressed()) {
-    //   switch (current_menu) {
-    //     case MENU_GAME:
-    //       tetris_start();
-    //       break;
-    //     case MENU_SETTINGS:
-    //       break;
-    //     case MENU_ABOUT:
-    //       break;
-    //     case MENU_USER_NAME:
-    //       break;
-    //     case MENU_LEDS:
-    //       break;
-    //     default:
-    //       break;
-    //   }
-    //   display_menu();
-    // }
+    if (joy_right_pressed()) {
+      switch (current_menu) {
+        case MENU_GAME:
+          tetris_start();
+          break;
+        case MENU_SETTINGS:
+          break;
+        case MENU_ABOUT:
+          break;
+        // case MENU_USER_NAME:
+        //   break;
+        // case MENU_LEDS:
+        //   break;
+        default:
+          break;
+      }
+      display_menu();
+    }
     Delay_Ms(100);
   }
 }
