@@ -17,8 +17,8 @@ extern "C" {
 #include "gpio.h"
 #include "oled_min.h"
 
-// #define DEBUG_ENABLE 1
-#define DEV_VERSION 1
+#define DEBUG_ENABLE 1
+#define DEV_VERSION  1
 
 #define APP_DBG(X...)             \
   if (1) {                        \
