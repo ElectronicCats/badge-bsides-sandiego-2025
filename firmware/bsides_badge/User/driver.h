@@ -17,8 +17,8 @@ extern "C" {
 #include "gpio.h"
 #include "oled_min.h"
 
-#define DEBUG_ENABLE 1
-#define DEV_VERSION  1
+// #define DEBUG_ENABLE 1
+#define DEV_VERSION 1
 
 #define APP_DBG(X...)             \
   if (1) {                        \
@@ -28,8 +28,6 @@ extern "C" {
   }
 
 // Pin assignments
-// #define PIN_BEEP PA1  // pin connected to buzzer
-// #define PIN_PAD  PC4  // pin conected to direction buttons
 #define BUTTON_RIGHT_PIN PD0
 #define BUTTON_LEFT_PIN  PC3
 #define BUTTON_UP_PIN    PC4
@@ -50,17 +48,6 @@ extern "C" {
 
 #define PIN_SCL PC2  // pin connected to OLED (I2C SCL)
 #define PIN_SDA PC1  // pin connected to OLED (I2C SDA)
-
-// Joypad calibration values
-#define JOY_N   197  // joypad UP
-#define JOY_NE  259  // joypad UP + RIGHT
-#define JOY_E   90   // joypad RIGHT
-#define JOY_SE  388  // joypad DOWN + RIGHT
-#define JOY_S   346  // joypad DOWN
-#define JOY_SW  616  // joypad DOWN + LEFT
-#define JOY_W   511  // joypad LEFT
-#define JOY_NW  567  // JOYPAD UP + LEFT
-#define JOY_DEV 20   // deviation
 
 // Sound enable
 #define JOY_SOUND 1  // 0: no sound, 1: with sound

@@ -3,7 +3,6 @@
 
 #include "../SSD1306/include/ssd1306.h"
 #include "bitmaps.h"
-#include "ch32v003_flash.h"
 #include "debug.h"
 #include "driver.h"
 #include "hardware_tests.h"
