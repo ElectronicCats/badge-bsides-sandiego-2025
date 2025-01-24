@@ -91,6 +91,7 @@ void insert_name() {
       }
       ssd1306_drawchar(selection, x, y, color);
       ssd1306_refresh();
+      Delay_Ms(250);
     }
     if (joy_left_pressed()) {
       display_saving_name();
