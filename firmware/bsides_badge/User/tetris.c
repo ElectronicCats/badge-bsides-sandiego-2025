@@ -68,7 +68,6 @@ int8_t DEPLACEMENT_YY_TTRIS;
 // ===================================================================================
 void reset_Score_TTRIS(void);
 uint8_t PSEUDO_RND_TTRIS(void);
-void SND_TTRIS(uint8_t Snd_TTRIS);
 void INTRO_MANIFEST_TTRIS(void);
 void END_DROP_TTRIS(void);
 void SETUP_NEW_PREVIEW_PIECE_TTRIS(uint8_t* Rot_TTRIS);
@@ -118,23 +117,19 @@ uint8_t recupe_LEVEL_TTRIS(uint8_t xPASS, uint8_t yPASS);
 void INIT_ALL_VAR_TTRIS(void);
 void recupe_HIGHSCORE_TTRIS(void);
 void Reset_Value_TTRIS(void);
-void save_HIGHSCORE_TTRIS(void);
-void Check_NEW_RECORD(void);
 uint8_t checksum(uint8_t Byte_);
 
 // ===================================================================================
 // Main Function
 // ===================================================================================
 int tetris_start() {
-  // while (1) {
   Reset_Value_TTRIS();
-  // MENU:;
   uint8_t Rot_TTRIS = 0;
   uint8_t SKIP_FRAME = 0;
   INIT_ALL_VAR_TTRIS();
   Game_Play_TTRIS();
   Ou_suis_Je_TTRIS(xx_TTRIS, yy_TTRIS);
-  INTRO_MANIFEST_TTRIS();
+  // INTRO_MANIFEST_TTRIS();
   SETUP_NEW_PREVIEW_PIECE_TTRIS(&Rot_TTRIS);
   Tiny_Flip_TTRIS(128);
   JOY_DLY_ms(1000);
@@ -146,10 +141,7 @@ int tetris_start() {
       END_DROP_TTRIS();
       if (End_Play_TTRIS()) {
         Tiny_Flip_TTRIS(128);
-        SND_TTRIS(3);
         JOY_DLY_ms(2000);
-        Check_NEW_RECORD();
-        // goto MENU;
         break;
       }
       yy_TTRIS = 2;
@@ -176,7 +168,6 @@ int tetris_start() {
       SKIP_FRAME++;
     }
   }
-  // }
 }
 
 // ===================================================================================
@@ -196,43 +187,6 @@ uint8_t PSEUDO_RND_TTRIS(void) {
   return RND_VAR_TTRIS;
 }
 
-void SND_TTRIS(uint8_t Snd_TTRIS) {
-  uint8_t q;
-  switch (Snd_TTRIS) {
-    case 0:
-      JOY_sound(3, 5);
-      JOY_sound(10, 10);
-      JOY_sound(3, 5);
-      break;
-    case 1:
-      JOY_sound(3, 2);
-      break;
-    case 2:
-      for (q = 1; q < 10; q++) {
-        JOY_sound(40, 80);
-        JOY_sound(150, 80);
-      }
-      break;
-    case 3:
-      for (q = 100; q > 10; q--) {
-        JOY_sound(q * 2, 6);
-        JOY_sound(q, 12);
-      }
-      break;
-    case 4:
-      JOY_sound(20, 150);
-      JOY_sound(100, 150);
-      break;
-    case 5:
-      for (q = 0; q < 126; q++) {
-        JOY_sound(q * 2, 1);
-      }
-      break;
-    default:
-      break;
-  }
-}
-
 void INTRO_MANIFEST_TTRIS(void) {
   uint8_t TIMER_1 = 0;
   recupe_HIGHSCORE_TTRIS();
@@ -248,7 +202,6 @@ void INTRO_MANIFEST_TTRIS(void) {
     TIMER_1 = (TIMER_1 < 7) ? TIMER_1 + 1 : 0;
     Flip_intro_TTRIS(&TIMER_1);
   }
-  SND_TTRIS(4);
 }
 
 void END_DROP_TTRIS(void) {
@@ -282,7 +235,6 @@ void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
       if (joy_right_pressed()) {
         Delay_Ms(50);
         if (LONG_PRESS_X_TTRIS == 0) {
-          SND_TTRIS(1);
         }
         if ((LONG_PRESS_X_TTRIS == 0) || (LONG_PRESS_X_TTRIS == 20)) {
           DEPLACEMENT_XX_TTRIS = 1;
@@ -295,7 +247,6 @@ void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
       if (joy_left_pressed()) {
         Delay_Ms(50);
         if (LONG_PRESS_X_TTRIS == 0) {
-          SND_TTRIS(1);
         }
         if ((LONG_PRESS_X_TTRIS == 0) || (LONG_PRESS_X_TTRIS == 20)) {
           DEPLACEMENT_XX_TTRIS = -1;
@@ -359,7 +310,6 @@ void Game_Play_TTRIS(void) {
   uint8_t LEVEL_TMP = (Nb_of_line_F_TTRIS / 20);
   if (Level_TTRIS != LEVEL_TMP) {
     Level_TTRIS = LEVEL_TMP;
-    SND_TTRIS(2);
   }
   if (Level_TTRIS < 21) {
     Level_Speed_ADJ_TTRIS = map(Level_TTRIS, 0, 20, 11, 1);
@@ -436,7 +386,6 @@ void FLASH_LINE_TTRIS(uint8_t* PASS_LINE) {
     PAINT_LINE_TTRIS(0, &PASS_LINE[0]);
     Tiny_Flip_TTRIS(82);
   }
-  SND_TTRIS(5);
 }
 
 void PAINT_LINE_TTRIS(uint8_t VISIBLE, uint8_t* PASS_LINE) {
@@ -493,7 +442,6 @@ uint8_t CHECK_if_Rot_Ok_TTRIS(uint8_t* Rot_TTRIS) {
     rotate_Matrix_TTRIS(*Rot_TTRIS);
     return 1;
   }
-  SND_TTRIS(0);
   return 0;
 }
 
@@ -1055,35 +1003,6 @@ void Reset_Value_TTRIS(void) {
   Level_TTRIS = 0;
   Nb_of_line_F_TTRIS = 0;
   Scores_TTRIS = 0;
-}
-
-void save_HIGHSCORE_TTRIS(void) {
-  /*
-  uint8_t LEVEL_=Level_TTRIS&0xff;
-  uint8_t LINE_0=(Nb_of_line_F_TTRIS>>8) & 0xFF;
-  uint8_t LINE_1=Nb_of_line_F_TTRIS&0xff;
-  uint8_t Scores_0=(Scores_TTRIS>>8) & 0xFF;
-  uint8_t Scores_1=Scores_TTRIS&0xff;
-  uint8_t t;
-  for (t=0;t<Number_of_Backup;t++){
-  EEPROM.write(1+(t*10),LEVEL_);
-  EEPROM.write(2+(t*10),LINE_0);
-  EEPROM.write(3+(t*10),LINE_1);
-  EEPROM.write(4+(t*10),Scores_0);
-  EEPROM.write(5+(t*10),Scores_1);
-  EEPROM.write(7+(t*10),checksum(LEVEL_));
-  EEPROM.write(8+(t*10),(checksum(LINE_0)+checksum(LINE_1)));
-  EEPROM.write(9+(t*10),(checksum(Scores_0)+checksum(Scores_1)));
-  }
-  */
-}
-
-void Check_NEW_RECORD(void) {
-  /*
-  if (Scores_TTRIS>uint16_t((EEPROM.read(4)<<8)|(EEPROM.read(5)))) {
-  save_HIGHSCORE_TTRIS();
-  }
-  */
 }
 
 uint8_t checksum(uint8_t Byte_) {

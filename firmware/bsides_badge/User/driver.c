@@ -67,19 +67,6 @@ uint8_t joy_right_pressed(void) {
   return !PIN_read(BUTTON_RIGHT_PIN);
 }
 
-// Buzzer
-void JOY_sound(uint8_t freq, uint8_t dur) {
-  //   while (dur--) {
-  // #if JOY_SOUND == 1
-  //     if (freq)
-  //       PIN_low(PIN_BEEP);
-  // #endif
-  //     Delay_Us(255 - freq);
-  //     PIN_high(PIN_BEEP);
-  //     Delay_Us(255 - freq);
-  //   }
-}
-
 // Pseudo random number generator
 uint16_t rnval = 0xACE1;
 uint16_t JOY_random(void) {

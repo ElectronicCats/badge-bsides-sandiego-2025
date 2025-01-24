@@ -29,11 +29,10 @@ static menu_item_t current_menu = MENU_GAME;
 
 void display_menu() {
   ssd1306_clear();
-  // ssd1306_drawImage(menus_bitmaps[current_menu], 0, 0, 128, 32,
-  // COLOR_NORMAL); ssd1306_drawstr_sz(menu_names[current_menu], 0, 0,
-  // COLOR_NORMAL,
+  ssd1306_drawImage(menus_bitmaps[current_menu], 0, 0, 128, 32, COLOR_NORMAL);
+  // ssd1306_drawstr_sz(menu_names[current_menu], 0, 0, COLOR_NORMAL,
   //                    fontsize_16x16);
-  ssd1306_drawstr(menu_names[current_menu], 0, 0, COLOR_NORMAL);
+  // ssd1306_drawstr(menu_names[current_menu], 0, 0, COLOR_NORMAL);
   ssd1306_refresh();
 }
 
@@ -50,9 +49,9 @@ void menus_move_up() {
 void display_saving_name() {
   ssd1306_clear();
   ssd1306_drawstr("saving", 5 * 8, 8, COLOR_NORMAL);
-  for (uint8_t i = 0; i < MAX_USER_NAME_LENGTH; i++) {
-    ssd1306_drawchar(user_name[i], i * 8 + 40, 16, COLOR_NORMAL);
-  }
+  // for (uint8_t i = 0; i < MAX_USER_NAME_LENGTH; i++) {
+  //   ssd1306_drawchar(user_name[i], i * 8 + 40, 16, COLOR_NORMAL);
+  // }
   ssd1306_refresh();
 }
 

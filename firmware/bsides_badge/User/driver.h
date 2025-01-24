@@ -49,9 +49,6 @@ extern "C" {
 #define PIN_SCL PC2  // pin connected to OLED (I2C SCL)
 #define PIN_SDA PC1  // pin connected to OLED (I2C SDA)
 
-// Sound enable
-#define JOY_SOUND 1  // 0: no sound, 1: with sound
-
 // Delays
 #define JOY_DLY_ms Delay_Ms
 #define JOY_DLY_us Delay_Us
@@ -90,7 +87,6 @@ uint8_t joy_up_pressed(void);
 uint8_t joy_down_pressed(void);
 uint8_t joy_left_pressed(void);
 uint8_t joy_right_pressed(void);
-void JOY_sound(uint8_t freq, uint8_t dur);
 uint16_t JOY_random(void);
 long map(long x, long in_min, long in_max, long out_min, long out_max);
 
