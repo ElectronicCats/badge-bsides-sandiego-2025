@@ -126,62 +126,57 @@ uint8_t checksum(uint8_t Byte_);
 // Main Function
 // ===================================================================================
 int tetris_start() {
+  // while (1) {
+  Reset_Value_TTRIS();
+  // MENU:;
+  uint8_t Rot_TTRIS = 0;
+  uint8_t SKIP_FRAME = 0;
+  INIT_ALL_VAR_TTRIS();
+  Game_Play_TTRIS();
+  Ou_suis_Je_TTRIS(xx_TTRIS, yy_TTRIS);
+  INTRO_MANIFEST_TTRIS();
+  SETUP_NEW_PREVIEW_PIECE_TTRIS(&Rot_TTRIS);
+  Tiny_Flip_TTRIS(128);
+  JOY_DLY_ms(1000);
+  xx_TTRIS = 55;
+  yy_TTRIS = 5;
   while (1) {
-    Reset_Value_TTRIS();
-    if ((joy_down_pressed())) {
-      JOY_DLY_ms(1000);
-      if ((joy_down_pressed())) {
-        save_HIGHSCORE_TTRIS();
+    CONTROLE_TTRIS(&Rot_TTRIS);
+    if (DROP_BREAK_TTRIS == 6) {
+      END_DROP_TTRIS();
+      if (End_Play_TTRIS()) {
+        Tiny_Flip_TTRIS(128);
+        SND_TTRIS(3);
+        JOY_DLY_ms(2000);
+        Check_NEW_RECORD();
+        // goto MENU;
+        break;
       }
+      yy_TTRIS = 2;
+      xx_TTRIS = 55;
+      PIECEs_TTRIS = PIECEs_TTRIS_PREVIEW;
+      SETUP_NEW_PREVIEW_PIECE_TTRIS(&Rot_TTRIS);
+      DOWN_DESACTIVE_TTRIS = 1;
+      Tiny_Flip_TTRIS(128);
+      Game_Play_TTRIS();
+      Tiny_Flip_TTRIS(128);
     }
-  MENU:;
-    uint8_t Rot_TTRIS = 0;
-    uint8_t SKIP_FRAME = 0;
-    INIT_ALL_VAR_TTRIS();
-    Game_Play_TTRIS();
-    Ou_suis_Je_TTRIS(xx_TTRIS, yy_TTRIS);
-    INTRO_MANIFEST_TTRIS();
-    SETUP_NEW_PREVIEW_PIECE_TTRIS(&Rot_TTRIS);
-    Tiny_Flip_TTRIS(128);
-    JOY_DLY_ms(1000);
-    xx_TTRIS = 55;
-    yy_TTRIS = 5;
-    while (1) {
-      CONTROLE_TTRIS(&Rot_TTRIS);
-      if (DROP_BREAK_TTRIS == 6) {
-        END_DROP_TTRIS();
-        if (End_Play_TTRIS()) {
-          Tiny_Flip_TTRIS(128);
-          SND_TTRIS(3);
-          JOY_DLY_ms(2000);
-          Check_NEW_RECORD();
-          goto MENU;
-        }
-        yy_TTRIS = 2;
-        xx_TTRIS = 55;
-        PIECEs_TTRIS = PIECEs_TTRIS_PREVIEW;
-        SETUP_NEW_PREVIEW_PIECE_TTRIS(&Rot_TTRIS);
-        DOWN_DESACTIVE_TTRIS = 1;
-        Tiny_Flip_TTRIS(128);
-        Game_Play_TTRIS();
-        Tiny_Flip_TTRIS(128);
-      }
 
-      // Toggle the item
-      if ((joy_up_pressed()) && (Ripple_filter_TTRIS == 0)) {
-        PSEUDO_RND_TTRIS();
-        Ripple_filter_TTRIS = 1;
-      }
+    // Toggle the item
+    if ((joy_up_pressed()) && (Ripple_filter_TTRIS == 0)) {
+      PSEUDO_RND_TTRIS();
+      Ripple_filter_TTRIS = 1;
+    }
 
-      Move_Piece_TTRIS();
-      if (SKIP_FRAME == 6) {
-        Tiny_Flip_TTRIS(82);
-        SKIP_FRAME = 0;
-      } else {
-        SKIP_FRAME++;
-      }
+    Move_Piece_TTRIS();
+    if (SKIP_FRAME == 6) {
+      Tiny_Flip_TTRIS(82);
+      SKIP_FRAME = 0;
+    } else {
+      SKIP_FRAME++;
     }
   }
+  // }
 }
 
 // ===================================================================================
@@ -285,6 +280,7 @@ void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
   if ((OU_SUIS_JE_X_ENGAGED_TTRIS == 0)) {
     if (SPEED_x_trig_TTRIS == 0) {
       if (joy_right_pressed()) {
+        Delay_Ms(50);
         if (LONG_PRESS_X_TTRIS == 0) {
           SND_TTRIS(1);
         }
@@ -297,6 +293,7 @@ void CONTROLE_TTRIS(uint8_t* Rot_TTRIS) {
         }
       }
       if (joy_left_pressed()) {
+        Delay_Ms(50);
         if (LONG_PRESS_X_TTRIS == 0) {
           SND_TTRIS(1);
         }
