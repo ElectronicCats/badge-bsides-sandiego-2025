@@ -8,31 +8,35 @@
 typedef enum {
   /* Main layer */
   MENU_GAME,
-  MENU_USER_NAME,
+  MENU_LEDS,
   MENU_ABOUT,
-  /* Settings layer */
-  // MENU_SETTINGS,
-  // MENU_LEDS,
   /************/
   MENU_COUNT
 } menu_item_t;
+
+typedef enum {
+  LEDS_FAST,
+  LEDS_SLOW,
+  LEDS_OFF,
+} leds_speed_t;
 
 char* menu_names[] = {"game", "nickname", "about"};
 const uint8_t MAX_USER_NAME_LENGTH = 6;
 uint8_t user_name_length = 0;
 uint8_t user_name[6] = {0};
 
+char* leds_options[] = {"fast", "slow", "off"};
+uint8_t leds_speeds[] = {50, 200, 0};
+leds_speed_t leds_speed = LEDS_FAST;
+uint8_t refrese_rate_s;
+
 typedef enum { LAYER_MAIN, LAYER_SETTINGS } layer_t;
 
 static menu_item_t current_menu = MENU_GAME;
-// static layer_t current_layer = LAYER_MAIN;
 
 void display_menu() {
   ssd1306_clear();
   ssd1306_drawImage(menus_bitmaps[current_menu], 0, 0, 128, 32, COLOR_NORMAL);
-  // ssd1306_drawstr_sz(menu_names[current_menu], 0, 0, COLOR_NORMAL,
-  //                    fontsize_16x16);
-  // ssd1306_drawstr(menu_names[current_menu], 0, 0, COLOR_NORMAL);
   ssd1306_refresh();
 }
 
@@ -49,9 +53,6 @@ void menus_move_up() {
 void display_saving_name() {
   ssd1306_clear();
   ssd1306_drawstr("saving", 5 * 8, 8, COLOR_NORMAL);
-  // for (uint8_t i = 0; i < MAX_USER_NAME_LENGTH; i++) {
-  //   ssd1306_drawchar(user_name[i], i * 8 + 40, 16, COLOR_NORMAL);
-  // }
   ssd1306_refresh();
 }
 
@@ -61,7 +62,6 @@ void insert_name() {
   ssd1306_drawstr("insert", 0, 0, COLOR_NORMAL);
   ssd1306_drawstr("your", 7 * 8, 0, COLOR_NORMAL);
   ssd1306_drawstr("name", 12 * 8, 0, COLOR_NORMAL);
-  // ssd1306_drawstr("a", 16, 16, COLOR_INVERT);
   ssd1306_refresh();
   Delay_Ms(1000);
   char selection = 'a';
@@ -124,6 +124,81 @@ void insert_name() {
   }
 }
 
+void move_leds_options_down() {
+  leds_speed = (leds_speed + 1) % 3;
+}
+
+void move_leds_options_up() {
+  leds_speed = (leds_speed - 1) % 3;
+}
+
+void leds_control_menu() {
+  ssd1306_clear();
+  ssd1306_drawstr("select", 0, 0, COLOR_NORMAL);
+  ssd1306_drawstr("led", 7 * 8, 0, COLOR_NORMAL);
+  ssd1306_drawstr("speed", 11 * 8, 0, COLOR_NORMAL);
+  ssd1306_drawstr(leds_options[leds_speed], 48, 16, COLOR_NORMAL);
+  ssd1306_refresh();
+
+  while (1) {
+    if (joy_left_pressed()) {
+      break;
+    }
+
+    if (joy_up_pressed()) {
+      move_leds_options_up();
+      ssd1306_clear();
+      ssd1306_drawstr("select", 0, 0, COLOR_NORMAL);
+      ssd1306_drawstr("led", 7 * 8, 0, COLOR_NORMAL);
+      ssd1306_drawstr("speed", 11 * 8, 0, COLOR_NORMAL);
+      ssd1306_drawstr(leds_options[leds_speed], 48, 16, COLOR_NORMAL);
+      ssd1306_refresh();
+      refrese_rate_s = leds_speeds[leds_speed];
+    }
+
+    if (joy_down_pressed()) {
+      move_leds_options_down();
+      ssd1306_clear();
+      ssd1306_drawstr("select", 0, 0, COLOR_NORMAL);
+      ssd1306_drawstr("led", 7 * 8, 0, COLOR_NORMAL);
+      ssd1306_drawstr("speed", 11 * 8, 0, COLOR_NORMAL);
+      ssd1306_drawstr(leds_options[leds_speed], 48, 16, COLOR_NORMAL);
+      ssd1306_refresh();
+      refrese_rate_s = leds_speeds[leds_speed];
+    }
+
+    Delay_Ms(100);
+  }
+}
+
+void leds_control_handler() {
+  if (leds_speed == LEDS_OFF) {
+    for (uint8_t i = 0; i < leds_count; i++) {
+      PIN_low(leds[i]);
+    }
+    return;
+  }
+
+  static uint8_t counter = 0;
+  static uint8_t led_index = 0;
+
+  if (led_index == 0) {
+    PIN_high(leds[led_index]);
+    for (uint8_t i = 1; i < leds_count; i++) {
+      PIN_low(leds[i]);
+    }
+  } else {
+    PIN_low(leds[led_index - 1]);
+    PIN_high(leds[led_index]);
+  }
+
+  counter++;
+  if (counter == refrese_rate_s) {
+    counter = 0;
+    led_index = (led_index + 1) % (leds_count + 1);
+  }
+}
+
 /**
  * @brief Display the credits
  *
@@ -147,20 +222,24 @@ void display_credits() {
 
 void menus_init() {
   display_menu();
+  refrese_rate_s = leds_speeds[leds_speed];
   while (1) {
     if (joy_up_pressed()) {
       menus_move_up();
+      Delay_Ms(100);
     }
     if (joy_down_pressed()) {
       menus_move_down();
+      Delay_Ms(100);
     }
     if (joy_right_pressed()) {
       switch (current_menu) {
         case MENU_GAME:
           tetris_start();
           break;
-        case MENU_USER_NAME:
-          insert_name();
+        case MENU_LEDS:
+          // insert_name();
+          leds_control_menu();
           break;
         case MENU_ABOUT:
           display_credits();
@@ -174,7 +253,10 @@ void menus_init() {
           break;
       }
       display_menu();
+      Delay_Ms(100);
     }
-    Delay_Ms(100);
+
+    Delay_Ms(1);
+    leds_control_handler();
   }
 }
