@@ -18,7 +18,7 @@ extern "C" {
 #include "oled_min.h"
 
 // #define DEBUG_ENABLE 1
-#define DEV_VERSION 1
+// #define DEV_VERSION 1
 
 #define APP_DBG(X...)             \
   if (1) {                        \
