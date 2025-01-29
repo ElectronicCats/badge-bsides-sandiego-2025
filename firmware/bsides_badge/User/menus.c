@@ -224,13 +224,16 @@ void menus_init() {
   display_menu();
   refrese_rate_s = leds_speeds[leds_speed];
   while (1) {
-    if (joy_up_pressed()) {
+    static uint8_t counter = 0;
+    counter++;
+
+    if (joy_up_pressed() && counter > 200) {
       menus_move_up();
-      Delay_Ms(100);
+      counter = 0;
     }
-    if (joy_down_pressed()) {
+    if (joy_down_pressed() && counter > 200) {
       menus_move_down();
-      Delay_Ms(100);
+      counter = 0;
     }
     if (joy_right_pressed()) {
       switch (current_menu) {
