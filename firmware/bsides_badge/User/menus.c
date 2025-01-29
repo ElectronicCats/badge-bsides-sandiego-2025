@@ -20,11 +20,6 @@ typedef enum {
   LEDS_OFF,
 } leds_speed_t;
 
-char* menu_names[] = {"game", "nickname", "about"};
-const uint8_t MAX_USER_NAME_LENGTH = 6;
-uint8_t user_name_length = 0;
-uint8_t user_name[6] = {0};
-
 char* leds_options[] = {"fast", "slow", "off"};
 uint8_t leds_speeds[] = {50, 200, 0};
 leds_speed_t leds_speed = LEDS_FAST;
@@ -54,74 +49,6 @@ void display_saving_name() {
   ssd1306_clear();
   ssd1306_drawstr("saving", 5 * 8, 8, COLOR_NORMAL);
   ssd1306_refresh();
-}
-
-// Ask the user to insert their name
-void insert_name() {
-  ssd1306_clear();
-  ssd1306_drawstr("insert", 0, 0, COLOR_NORMAL);
-  ssd1306_drawstr("your", 7 * 8, 0, COLOR_NORMAL);
-  ssd1306_drawstr("name", 12 * 8, 0, COLOR_NORMAL);
-  ssd1306_refresh();
-  Delay_Ms(1000);
-  char selection = 'a';
-  user_name_length = 0;
-  memset(user_name, 0, sizeof(user_name));
-
-  uint8_t refresh_counter = 0;
-  uint8_t refresh_rate_s = 5;
-  ssd1306_color_mode_t color = COLOR_NORMAL;
-  uint8_t start_x = 40;
-  uint8_t x = start_x;
-  uint8_t y = 16;
-  ssd1306_drawchar(selection, x, y, color);
-  ssd1306_refresh();
-  while (1) {
-    refresh_counter++;
-    if (joy_right_pressed()) {
-      user_name[user_name_length] = selection;
-      user_name_length++;
-      ssd1306_drawchar(selection, x, y, COLOR_NORMAL);
-      x += 8;
-      if (user_name_length >= MAX_USER_NAME_LENGTH) {
-        display_saving_name();
-        Delay_Ms(1500);
-        break;
-      }
-      ssd1306_drawchar(selection, x, y, color);
-      ssd1306_refresh();
-      Delay_Ms(250);
-    }
-    if (joy_left_pressed()) {
-      display_saving_name();
-      Delay_Ms(1500);
-      break;
-    }
-    if (joy_up_pressed()) {
-      if (selection == 'a') {
-        selection = 'z';
-      } else {
-        selection--;
-      }
-      refresh_counter = refresh_rate_s;
-    }
-    if (joy_down_pressed()) {
-      if (selection == 'z') {
-        selection = 'a';
-      } else {
-        selection++;
-      }
-      refresh_counter = refresh_rate_s;
-    }
-    Delay_Ms(100);
-
-    if (refresh_counter == refresh_rate_s) {
-      color = color == COLOR_NORMAL ? COLOR_INVERT : COLOR_NORMAL;
-      ssd1306_drawchar(selection, x, y, color);
-      ssd1306_refresh();
-      refresh_counter = 0;
-    }
-  }
 }
 
 void move_leds_options_down() {
@@ -231,17 +158,22 @@ void menus_init() {
       menus_move_up();
       counter = 0;
     }
+
     if (joy_down_pressed() && counter > 200) {
       menus_move_down();
       counter = 0;
     }
+
     if (joy_right_pressed()) {
+      for (uint8_t i = 1; i < leds_count; i++) {
+        PIN_low(leds[i]);
+      }
+
       switch (current_menu) {
         case MENU_GAME:
           tetris_start();
           break;
         case MENU_LEDS:
-          // insert_name();
           leds_control_menu();
           break;
         case MENU_ABOUT:
