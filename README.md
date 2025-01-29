@@ -1,4 +1,4 @@
-# Badge HackGDL 2.0 2025
+# Badge bsides San Diego 2025
 
 ## Technology
 
